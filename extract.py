@@ -66,13 +66,14 @@ def crop_images(src: MatLike,
 
 def save_images(images: list[MatLike],
                 root: Path = Path('.'),
-                prefix: str = 'IMG') -> None:
+                prefix: str = 'IMG',
+                quality: int = 90) -> None:
     '''
     save images into files
     '''
     for i, image in enumerate(images):
         image_path = str(root / Path(f'{prefix}_{i+1}.jpg'))
-        cv2.imwrite(image_path, image)
+        cv2.imwrite(image_path, image, (cv2.IMWRITE_JPEG_QUALITY, quality, ))
 
 
 if __name__ == '__main__':
@@ -80,4 +81,4 @@ if __name__ == '__main__':
     gray = convert_to_gray_scale(raw)
     contours = find_largest_contours(gray, 4)
     images = crop_images(raw, contours)
-    save_images(images, root=Path('.lab'))
+    save_images(images, root=Path('.lab'), quality=75)
