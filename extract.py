@@ -5,9 +5,14 @@ from pathlib import Path
 
 
 def read_rgb_image(name: Path) -> MatLike:
-    ''' load the image into an RGB nd-array '''
+    '''
+    load the image into an RGB nd-array
+    '''
+    # read image
     raw = cv2.imread(str(name))
+    # correct to RGB
     image = cv2.cvtColor(raw, cv2.COLOR_BGR2RGB)
+    #
     return image
 
 
@@ -15,7 +20,9 @@ def convert_to_gray_scale(image: MatLike) -> MatLike:
     '''
     convert to gray scale
     '''
+    # convert to gray scale
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    #
     return gray
 
 
@@ -34,33 +41,43 @@ def find_largest_contours(src: MatLike,
     contours = imutils.grab_contours(contours)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
     contours = contours[:n]
-
+    #
     return contours
 
 
 def crop_images(src: MatLike,
                 contours: list[MatLike],
-                root: Path = Path('.'),
-                prefix: str = 'IMG') -> None:
+                ) -> list[MatLike]:
     '''
-    crop images into rectangles
+    crop images into sub-images
     '''
-    # extract photos
-    for i, contour in enumerate(contours):
+    cropped_images = []
+    for contour in contours:
         # Get the bounding rectangle for the contour
         x, y, w, h = cv2.boundingRect(contour)
 
         # crop the image
         cropped = src[y:y+h, x:x+w]
         image_out = cv2.cvtColor(cropped, cv2.COLOR_RGB2BGR)
+        cropped_images.append(image_out)
+    # return list of cropped images
+    return cropped_images
 
-        # save the sub-image
-        image_path = root / Path(f'{prefix}_{i+1}.jpg')
-        cv2.imwrite(str(image_path), image_out)
+
+def save_images(images: list[MatLike],
+                root: Path = Path('.'),
+                prefix: str = 'IMG') -> None:
+    '''
+    save images into files
+    '''
+    for i, image in enumerate(images):
+        image_path = str(root / Path(f'{prefix}_{i+1}.jpg'))
+        cv2.imwrite(image_path, image)
 
 
 if __name__ == '__main__':
-    image = read_rgb_image(Path('.lab/raw.jpg'))
-    gray = convert_to_gray_scale(image)
+    raw = read_rgb_image(Path('.lab/raw.jpg'))
+    gray = convert_to_gray_scale(raw)
     contours = find_largest_contours(gray, 4)
-    crop_images(image, contours, root=Path('.lab'))
+    images = crop_images(raw, contours)
+    save_images(images, root=Path('.lab'))
