@@ -34,7 +34,8 @@ def find_largest_contours(n: int = 4) -> list[MatLike]:
     return contours
 
 
-def crop_images(contours: list[MatLike],
+def crop_images(image: MatLike,
+                contours: list[MatLike],
                 root: Path = Path('.'),
                 prefix: str = 'IMG') -> None:
     # extract photos
@@ -53,4 +54,4 @@ if __name__ == '__main__':
     image = read_rgb_image(Path('.lab/raw.jpg'))
     gray = convert_to_gray_scale(image)
     contours = find_largest_contours(4)
-    crop_images(contours, root=Path('.lab'))
+    crop_images(image, contours, root=Path('.lab'))
