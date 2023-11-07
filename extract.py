@@ -78,11 +78,11 @@ def find_largest_contour(src: MatLike,
     #     within = aspect * 0.90 < rect[-2] / rect[-1] < aspect * 1.1
     #     return within
 
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    contour = max(contours, key=cv2.contourArea)
     # contours = [c for c in contours if aspect_matched(c)]
 
     #
-    return contours[0]
+    return contour
 
 
 def crop_images(src: list[MatLike],
