@@ -1,5 +1,5 @@
 import cv2
-from cv2.typing import MatLike
+from cv2.typing import MatLike, Rect
 import imutils
 from pathlib import Path
 import numpy as np
@@ -51,25 +51,35 @@ def manually_split(image: MatLike,
     return images
 
 
-def find_largest_contour(src: MatLike,
-                         target_aspect_ratio: float = 5/3.5) -> MatLike:
+def find_best_contour(src: MatLike,
+                      target_aspect_ratio: float = 5/3.5,
+                      min_width: int = 1500,
+                      min_height: int = 1100) -> MatLike:
     '''
     find the largest contour in an image
     '''
 
     # test metrics
+    def rectangle(contour) -> Rect:
+        return cv2.boundingRect(contour)
+
     def how_close_to_aspect_ratio(contour) -> float:
-        rect = cv2.boundingRect(contour)
+        rect = rectangle(contour)
         aspect_ratio = rect[-2] / rect[-1]
         diff = abs(aspect_ratio - target_aspect_ratio)
         return diff
 
+    def width_height(contour) -> tuple[int, int]:
+        rect = rectangle(contour)
+        return rect[-2], rect[-1]
+
     # extract
+
     def extract(thresh_value: int,
                 erode_size: int,
                 dilate_size: int,
                 erode_iteration: int,
-                dilate_iteration: int) -> tuple[MatLike, float]:
+                dilate_iteration: int) -> tuple[MatLike, float, int, int]:
         # find threshold
         _, thresh = cv2.threshold(src, thresh_value, 255, cv2.THRESH_BINARY_INV)
         # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
@@ -87,9 +97,10 @@ def find_largest_contour(src: MatLike,
 
         # calc metrics
         aspect_ratio_diff = how_close_to_aspect_ratio(contour)
+        width, height = width_height(contour)
 
         # return
-        return contour, aspect_ratio_diff
+        return contour, aspect_ratio_diff, width, height
 
     # try different params to find the best
     args_combos = itertools.product(
@@ -100,7 +111,8 @@ def find_largest_contour(src: MatLike,
         (3, 5,),
     )
     contours = [extract(*args) for args in args_combos]
-    best_contour = min(contours, key=lambda x: x[-1])[0]
+    contours = filter(lambda x: x[2] > min_width and x[3] > min_height, contours)
+    best_contour = min(contours, key=lambda x: x[1])[0]
 
     return best_contour
 
@@ -140,6 +152,6 @@ if __name__ == '__main__':
     raw = read_rgb_image(Path('.lab/raw.jpg'))
     images = manually_split(raw, 2300, 1200)
     gray_images = [convert_to_gray_scale(image) for image in images]
-    contours = [find_largest_contour(gray) for gray in gray_images]
+    contours = [find_best_contour(gray) for gray in gray_images]
     cropped_images = crop_images(images, contours)
     save_images(cropped_images, root=Path('.lab'), quality=75)
