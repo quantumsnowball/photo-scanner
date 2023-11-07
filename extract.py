@@ -4,6 +4,7 @@ import imutils
 from pathlib import Path
 import numpy as np
 import itertools
+from dataclasses import dataclass
 
 
 def read_rgb_image(name: Path) -> MatLike:
@@ -53,8 +54,8 @@ def manually_split(image: MatLike,
 
 def find_best_contour(src: MatLike,
                       target_aspect_ratio: float = 5/3.5,
-                      min_width: int = 1500,
-                      min_height: int = 1100) -> MatLike:
+                      min_width: int = 1450,
+                      min_height: int = 1050) -> MatLike:
     '''
     find the largest contour in an image
     '''
@@ -74,12 +75,18 @@ def find_best_contour(src: MatLike,
         return rect[-2], rect[-1]
 
     # extract
+    @dataclass
+    class Extracted:
+        contour: MatLike
+        aspect_ratio_diff: float
+        width: int
+        height: int
 
     def extract(thresh_value: int,
                 erode_size: int,
                 dilate_size: int,
                 erode_iteration: int,
-                dilate_iteration: int) -> tuple[MatLike, float, int, int]:
+                dilate_iteration: int) -> Extracted:
         # find threshold
         _, thresh = cv2.threshold(src, thresh_value, 255, cv2.THRESH_BINARY_INV)
         # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
@@ -100,19 +107,20 @@ def find_best_contour(src: MatLike,
         width, height = width_height(contour)
 
         # return
-        return contour, aspect_ratio_diff, width, height
+        # return contour, aspect_ratio_diff, width, height
+        return Extracted(contour, aspect_ratio_diff, width, height)
 
     # try different params to find the best
     args_combos = itertools.product(
-        (128, 196, 230),
-        (3, 5, 8),
+        (128, 196, 230, 250),
+        (3, 5, 8, 12),
         (5, 10, 20, ),
         (5, 8),
         (3, 5,),
     )
     contours = [extract(*args) for args in args_combos]
-    contours = filter(lambda x: x[2] > min_width and x[3] > min_height, contours)
-    best_contour = min(contours, key=lambda x: x[1])[0]
+    contours = filter(lambda x: x.width > min_width and x.height > min_height, contours)
+    best_contour = min(contours, key=lambda x: x.aspect_ratio_diff).contour
 
     return best_contour
 
