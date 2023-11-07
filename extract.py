@@ -3,6 +3,7 @@ from cv2.typing import MatLike
 import imutils
 from pathlib import Path
 import numpy as np
+import itertools
 
 
 def read_rgb_image(name: Path) -> MatLike:
@@ -51,38 +52,57 @@ def manually_split(image: MatLike,
 
 
 def find_largest_contour(src: MatLike,
-                         aspect: float = 5/3.5) -> MatLike:
+                         target_aspect_ratio: float = 5/3.5) -> MatLike:
     '''
     find the largest contour in an image
     '''
-    # find threshold
-    _, thresh = cv2.threshold(src, 240, 255, cv2.THRESH_BINARY_INV)
-    # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
 
-    # clean threshold
-    thresh = cv2.erode(thresh, kernel=np.ones((5, 5,),), iterations=2)
-    thresh = cv2.dilate(thresh, kernel=np.ones((20, 20,),), iterations=2)
-    # import matplotlib.pyplot as plt
-    # plt.imshow(thresh, cmap='gray')
-    # plt.show()
+    # test metrics
+    def how_close_to_aspect_ratio(contour) -> float:
+        rect = cv2.boundingRect(contour)
+        aspect_ratio = rect[-2] / rect[-1]
+        diff = abs(aspect_ratio - target_aspect_ratio)
+        return diff
 
-    # find contours
-    contours = cv2.findContours(thresh,
-                                cv2.RETR_EXTERNAL,
-                                cv2.CHAIN_APPROX_SIMPLE)
-    contours = imutils.grab_contours(contours)
+    # extract
+    def extract(thresh_value: int,
+                erode_size: int,
+                dilate_size: int,
+                erode_iteration: int,
+                dilate_iteration: int) -> tuple[MatLike, float]:
+        # find threshold
+        _, thresh = cv2.threshold(src, thresh_value, 255, cv2.THRESH_BINARY_INV)
+        # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
 
-    # filter
-    # def aspect_matched(contour) -> bool:
-    #     rect = cv2.boundingRect(contour)
-    #     within = aspect * 0.90 < rect[-2] / rect[-1] < aspect * 1.1
-    #     return within
+        # clean threshold
+        thresh = cv2.erode(thresh, kernel=np.ones((erode_size, erode_size,),), iterations=erode_iteration)
+        thresh = cv2.dilate(thresh, kernel=np.ones((dilate_size, dilate_size,),), iterations=dilate_iteration)
 
-    contour = max(contours, key=cv2.contourArea)
-    # contours = [c for c in contours if aspect_matched(c)]
+        # find contours
+        contours = cv2.findContours(thresh,
+                                    cv2.RETR_EXTERNAL,
+                                    cv2.CHAIN_APPROX_SIMPLE)
+        contours = imutils.grab_contours(contours)
+        contour = max(contours, key=cv2.contourArea)
 
-    #
-    return contour
+        # calc metrics
+        aspect_ratio_diff = how_close_to_aspect_ratio(contour)
+
+        # return
+        return contour, aspect_ratio_diff
+
+    # try different params to find the best
+    args_combos = itertools.product(
+        (128, 196, 230),
+        (3, 5, 8),
+        (5, 10, 20, ),
+        (5, 8),
+        (3, 5,),
+    )
+    contours = [extract(*args) for args in args_combos]
+    best_contour = min(contours, key=lambda x: x[-1])[0]
+
+    return best_contour
 
 
 def crop_images(src: list[MatLike],
