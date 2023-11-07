@@ -2,6 +2,7 @@ import cv2
 from cv2.typing import MatLike
 import imutils
 from pathlib import Path
+import numpy as np
 
 
 def read_rgb_image(name: Path) -> MatLike:
@@ -26,23 +27,61 @@ def convert_to_gray_scale(image: MatLike) -> MatLike:
     return gray
 
 
-def find_largest_contours(src: MatLike,
-                          n: int = 4) -> list[MatLike]:
+def manually_split(image: MatLike,
+                   x: int, y: int) -> list[MatLike]:
     '''
-    find largest contours in an image
+    manually split image into 4 sub-images
+    '''
+    images = [
+        image[0:y, 0:x],
+        image[0:y, x:],
+        image[y:, 0:x],
+        image[y:, x:],
+    ]
+    # Display the sub-images
+    # cv2.imshow("Sub-Image 0", images[0])
+    # cv2.imshow("Sub-Image 1", images[1])
+    # cv2.imshow("Sub-Image 2", images[2])
+    # cv2.imshow("Sub-Image 3", images[3])
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    # return list
+    return images
+
+
+def find_largest_contour(src: MatLike,
+                         aspect: float = 5/3.5) -> MatLike:
+    '''
+    find the largest contour in an image
     '''
     # find threshold
     _, thresh = cv2.threshold(src, 200, 255, cv2.THRESH_BINARY_INV)
+
+    # clean threshold
+    # thresh = cv2.erode(thresh, kernel=np.ones((10, 10,),), iterations=2)
+    # thresh = cv2.dilate(thresh, kernel=np.ones((20, 20,),), iterations=2)
+    # import matplotlib.pyplot as plt
+    # plt.imshow(thresh, cmap='gray')
+    # plt.show()
 
     # find contours
     contours = cv2.findContours(thresh,
                                 cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
+
+    # filter
+    def aspect_matched(contour) -> bool:
+        rect = cv2.boundingRect(contour)
+        within = aspect * 0.90 < rect[-2] / rect[-1] < aspect * 1.1
+        return within
+
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
-    contours = contours[:n]
+    # contours = [c for c in contours if aspect_matched(c)][:n]
+
     #
-    return contours
+    return contours[0]
 
 
 def crop_images(src: MatLike,
@@ -78,7 +117,8 @@ def save_images(images: list[MatLike],
 
 if __name__ == '__main__':
     raw = read_rgb_image(Path('.lab/raw.jpg'))
-    gray = convert_to_gray_scale(raw)
-    contours = find_largest_contours(gray, 4)
-    images = crop_images(raw, contours)
-    save_images(images, root=Path('.lab'), quality=75)
+    images = manually_split(raw, 2300, 1200)
+    # gray_images = [convert_to_gray_scale(image) for image in images]
+    # contours = [find_largest_contour(gray) for gray in gray_images]
+    # images = crop_images(raw, contours)
+    # save_images(images, root=Path('.lab'), quality=75)
