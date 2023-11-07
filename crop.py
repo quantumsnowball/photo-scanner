@@ -1,17 +1,26 @@
 from pathlib import Path
 from PIL import Image, ImageDraw
-import numpy as np
 
 
 def read_image_array(name: Path,
                      rotation: int = 270) -> Image.Image:
+    # open
     image = Image.open(name)
+    # rotate the image
     rotated = image.rotate(rotation, expand=True)
+    #
     return rotated
 
 
-def preview_crop(image) -> None:
+def preview_crop(image: Image.Image,
+                 fill: tuple[int, int, int] = (0, 255, 0, ),
+                 width: int = 5) -> None:
     draw = ImageDraw.Draw(image)
+    # Define the coordinates of the line
+    line_coordinates = [(1000, 0), (1000, 1000)]
+    # Draw the line on the image
+    draw.line(line_coordinates, fill=fill, width=width)
+    # show
     image.show()
 
 
