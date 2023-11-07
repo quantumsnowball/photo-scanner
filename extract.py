@@ -56,11 +56,11 @@ def find_largest_contour(src: MatLike,
     find the largest contour in an image
     '''
     # find threshold
-    _, thresh = cv2.threshold(src, 128, 255, cv2.THRESH_BINARY_INV)
+    _, thresh = cv2.threshold(src, 240, 255, cv2.THRESH_BINARY_INV)
     # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
 
     # clean threshold
-    # thresh = cv2.erode(thresh, kernel=np.ones((10, 10,),), iterations=2)
+    thresh = cv2.erode(thresh, kernel=np.ones((5, 5,),), iterations=2)
     thresh = cv2.dilate(thresh, kernel=np.ones((20, 20,),), iterations=2)
     # import matplotlib.pyplot as plt
     # plt.imshow(thresh, cmap='gray')
