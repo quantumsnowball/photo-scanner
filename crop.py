@@ -3,9 +3,11 @@ from PIL import Image
 import numpy as np
 
 
-def read_image_array(name: Path) -> np.ndarray:
+def read_image_array(name: Path,
+                     rotation: int = 270) -> np.ndarray:
     image = Image.open(name)
-    arr = np.array(image)
+    rotated = image.rotate(rotation, expand=True)
+    arr = np.array(rotated)
     return arr
 
 
