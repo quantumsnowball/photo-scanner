@@ -56,11 +56,12 @@ def find_largest_contour(src: MatLike,
     find the largest contour in an image
     '''
     # find threshold
-    _, thresh = cv2.threshold(src, 200, 255, cv2.THRESH_BINARY_INV)
+    _, thresh = cv2.threshold(src, 128, 255, cv2.THRESH_BINARY_INV)
+    # thresh = cv2.adaptiveThreshold(src, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 31, 5)
 
     # clean threshold
     # thresh = cv2.erode(thresh, kernel=np.ones((10, 10,),), iterations=2)
-    # thresh = cv2.dilate(thresh, kernel=np.ones((20, 20,),), iterations=2)
+    thresh = cv2.dilate(thresh, kernel=np.ones((20, 20,),), iterations=2)
     # import matplotlib.pyplot as plt
     # plt.imshow(thresh, cmap='gray')
     # plt.show()
@@ -72,31 +73,31 @@ def find_largest_contour(src: MatLike,
     contours = imutils.grab_contours(contours)
 
     # filter
-    def aspect_matched(contour) -> bool:
-        rect = cv2.boundingRect(contour)
-        within = aspect * 0.90 < rect[-2] / rect[-1] < aspect * 1.1
-        return within
+    # def aspect_matched(contour) -> bool:
+    #     rect = cv2.boundingRect(contour)
+    #     within = aspect * 0.90 < rect[-2] / rect[-1] < aspect * 1.1
+    #     return within
 
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
-    # contours = [c for c in contours if aspect_matched(c)][:n]
+    # contours = [c for c in contours if aspect_matched(c)]
 
     #
     return contours[0]
 
 
-def crop_images(src: MatLike,
+def crop_images(src: list[MatLike],
                 contours: list[MatLike],
                 ) -> list[MatLike]:
     '''
     crop images into sub-images
     '''
     cropped_images = []
-    for contour in contours:
+    for image, contour in zip(src, contours):
         # Get the bounding rectangle for the contour
         x, y, w, h = cv2.boundingRect(contour)
 
         # crop the image
-        cropped = src[y:y+h, x:x+w]
+        cropped = image[y:y+h, x:x+w]
         image_out = cv2.cvtColor(cropped, cv2.COLOR_RGB2BGR)
         cropped_images.append(image_out)
     # return list of cropped images
@@ -118,7 +119,7 @@ def save_images(images: list[MatLike],
 if __name__ == '__main__':
     raw = read_rgb_image(Path('.lab/raw.jpg'))
     images = manually_split(raw, 2300, 1200)
-    # gray_images = [convert_to_gray_scale(image) for image in images]
-    # contours = [find_largest_contour(gray) for gray in gray_images]
-    # images = crop_images(raw, contours)
-    # save_images(images, root=Path('.lab'), quality=75)
+    gray_images = [convert_to_gray_scale(image) for image in images]
+    contours = [find_largest_contour(gray) for gray in gray_images]
+    cropped_images = crop_images(images, contours)
+    save_images(cropped_images, root=Path('.lab'), quality=75)
