@@ -11,7 +11,8 @@ RAW_FILE = Path('.raw.jpg')
 @click.group(invoke_without_command=True)
 @click.pass_context
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
-def photo_scanner(ctx: click.Context, profile: Profile) -> None:
+@click.option('-qt', '--quality', default=85, help='image quality level')
+def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
     # ignore subcommand call
     if ctx.invoked_subcommand is not None:
         return
@@ -25,7 +26,7 @@ def photo_scanner(ctx: click.Context, profile: Profile) -> None:
     cropped_images = crop_images(raw_image, crop_locs)
     # apply post processing enhancement
     # write images to disk
-    save_images(cropped_images, outdir='.')
+    save_images(cropped_images, outdir='.', quality=quality)
     # delete the raw image
     RAW_FILE.unlink()
 

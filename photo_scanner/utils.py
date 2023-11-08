@@ -34,13 +34,14 @@ def read_image(name: Path | str,
 def save_images(images: list[Image.Image],
                 *,
                 outdir: Path | str,
+                quality: int = 85,
                 ext: ImageFormats = 'jpg') -> None:
     # as Path
     outdir = Path(outdir) if isinstance(outdir, str) else outdir
     # save
     highest = highest_filename(ext)
     for i, image in enumerate(images):
-        image.save(outdir / f'{highest+i+1}.{ext}')
+        image.save(outdir / f'{highest+i+1}.{ext}', quality=quality)
 
 
 Profile = Literal['low', 'middle', 'high']
