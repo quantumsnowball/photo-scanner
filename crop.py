@@ -1,6 +1,6 @@
 from pathlib import Path
-from typing import Literal
 from PIL import Image, ImageDraw
+from utils import save_images
 
 
 Xs = (700, 2400)
@@ -42,15 +42,6 @@ def crop_images(image: Image.Image,
                 height: int) -> list[Image.Image]:
     images = [image.crop((x, y, x+width, y+height)) for x in Xs for y in Ys]
     return images
-
-
-def save_images(images: list[Image.Image],
-                *,
-                outdir: Path,
-                prefix: str = 'IMG',
-                ext: Literal['jpg', 'png'] = 'jpg') -> None:
-    for i, image in enumerate(images):
-        image.save(outdir / f'{prefix}_{i}.jpg')
 
 
 if __name__ == '__main__':
