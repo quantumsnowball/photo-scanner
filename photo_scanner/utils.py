@@ -5,6 +5,17 @@ from dataclasses import dataclass
 import yaml
 
 
+ImageFormats = Literal['jpg', 'png']
+
+
+def highest_filename(ext: ImageFormats) -> int:
+    cwd = Path().cwd()
+    files = cwd.glob(f'*.{ext}')
+    nums = [int(f.stem) for f in files if f.stem.isdigit()]
+    highest = max(nums)
+    return highest
+
+
 def read_image(name: Path | str,
                rotation: int = 270) -> Image.Image:
     # as Path
@@ -20,13 +31,13 @@ def read_image(name: Path | str,
 def save_images(images: list[Image.Image],
                 *,
                 outdir: Path | str,
-                prefix: str = 'IMG',
-                ext: Literal['jpg', 'png'] = 'jpg') -> None:
+                ext: ImageFormats = 'jpg') -> None:
     # as Path
     outdir = Path(outdir) if isinstance(outdir, str) else outdir
     # save
+    highest = highest_filename(ext)
     for i, image in enumerate(images):
-        image.save(outdir / f'{prefix}_{i}.{ext}')
+        image.save(outdir / f'{highest+i+1}.{ext}')
 
 
 Profile = Literal['low', 'middle', 'high']

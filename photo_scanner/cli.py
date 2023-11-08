@@ -24,7 +24,6 @@ def photo_scanner(ctx: click.Context, profile: Profile) -> None:
     crop_locs = read_crop_config(profile)
     cropped_images = crop_images(raw_image, crop_locs)
     # apply post processing enhancement
-    # determin the correct sequencial filenames
     # write images to disk
     save_images(cropped_images, outdir='.')
     # delete the raw image
