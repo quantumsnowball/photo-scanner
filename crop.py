@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 from PIL import Image, ImageDraw
 
 
@@ -22,9 +23,7 @@ def preview_crop(image: Image.Image,
                  width: int = 5) -> None:
     draw = ImageDraw.Draw(image)
     # Define the coordinates of the line
-    line_coordinates = [(1000, 0), (1000, 1000)]
     # Draw the line on the image
-    # draw.line(line_coordinates, fill=fill, width=width)
     for x in X:
         draw.line([(x, 0), (x, image.height)], fill='red', width=width)
         draw.line([(x+W, 0), (x+W, image.height)], fill='green', width=width)
@@ -36,13 +35,30 @@ def preview_crop(image: Image.Image,
     image.show()
 
 
+def crop_images(image: Image.Image,
+                x: tuple[int, ...],
+                y: tuple[int, ...],
+                width: int,
+                height: int) -> list[Image.Image]:
+    images = [image.crop((x, y, x+width, y+height)) for x in X for y in Y]
+    return images
+
+
+def save_images(images: list[Image.Image],
+                *,
+                outdir: Path,
+                prefix: str = 'IMG',
+                ext: Literal['jpg', 'png'] = 'jpg') -> None:
+    for i, image in enumerate(images):
+        image.save(outdir / f'{prefix}_{i}.jpg')
+
+
 if __name__ == '__main__':
     # read the raw image
     raw = read_image_array(Path('.lab/raw.jpg'))
     # read the user coordinate and width height info
-    preview_crop(raw)
-    # import matplotlib.pyplot as plt
-    # plt.imshow(np.array(raw))
-    # plt.show()
     # display the preview of the crop
+    # preview_crop(raw)
     # crop and save the photos
+    images = crop_images(raw, X, Y, W, H)
+    save_images(images, outdir=Path('.lab'))
