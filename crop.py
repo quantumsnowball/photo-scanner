@@ -3,10 +3,10 @@ from typing import Literal
 from PIL import Image, ImageDraw
 
 
-X = (700, 2400)
-Y = (120, 1400)
-W = 1550
-H = 1080
+Xs = (700, 2400)
+Ys = (120, 1400)
+WIDTH = 1550
+HEIGHT = 1080
 
 
 def read_image_array(name: Path,
@@ -24,23 +24,23 @@ def preview_crop(image: Image.Image,
     draw = ImageDraw.Draw(image)
     # Define the coordinates of the line
     # Draw the line on the image
-    for x in X:
+    for x in Xs:
         draw.line([(x, 0), (x, image.height)], fill='red', width=width)
-        draw.line([(x+W, 0), (x+W, image.height)], fill='green', width=width)
-    for y in Y:
+        draw.line([(x+WIDTH, 0), (x+WIDTH, image.height)], fill='green', width=width)
+    for y in Ys:
         draw.line([(0, y), (image.width, y)], fill='red', width=width)
-        draw.line([(0, y+H), (image.width, y+H)], fill='green', width=width)
+        draw.line([(0, y+HEIGHT), (image.width, y+HEIGHT)], fill='green', width=width)
 
     # show
     image.show()
 
 
 def crop_images(image: Image.Image,
-                x: tuple[int, ...],
-                y: tuple[int, ...],
+                Xs: tuple[int, ...],
+                Ys: tuple[int, ...],
                 width: int,
                 height: int) -> list[Image.Image]:
-    images = [image.crop((x, y, x+width, y+height)) for x in X for y in Y]
+    images = [image.crop((x, y, x+width, y+height)) for x in Xs for y in Ys]
     return images
 
 
@@ -60,5 +60,5 @@ if __name__ == '__main__':
     # display the preview of the crop
     # preview_crop(raw)
     # crop and save the photos
-    images = crop_images(raw, X, Y, W, H)
+    images = crop_images(raw, Xs, Ys, WIDTH, HEIGHT)
     save_images(images, outdir=Path('.lab'))
