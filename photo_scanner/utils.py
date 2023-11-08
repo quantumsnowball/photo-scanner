@@ -30,18 +30,21 @@ class CropLocation:
 
     def __post_init__(self):
         # scale the factor according to profile
-        mul = {'low': 1, 'middle': 2, 'high': 4}[self.profile]
-        self.x *= mul
-        self.y *= mul
-        self.width *= mul
-        self.height *= mul
+        self.x *= self.factor
+        self.y *= self.factor
+        self.width *= self.factor
+        self.height *= self.factor
 
     @property
-    def x_(self):
+    def factor(self) -> int:
+        return {'low': 1, 'middle': 2, 'high': 4}[self.profile]
+
+    @property
+    def x_(self) -> int:
         return self.x+self.width
 
     @property
-    def y_(self):
+    def y_(self) -> int:
         return self.y+self.height
 
     @property
@@ -59,6 +62,10 @@ class CropLocation:
     @property
     def right(self):
         return ((self.x_, self.y), (self.x_, self.y_))
+
+    @property
+    def line_width(self) -> int:
+        return 5 * self.factor
 
 
 CropLocations = list[CropLocation]
