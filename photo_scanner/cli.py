@@ -10,12 +10,10 @@ def photo_scanner(ctx: click.Context) -> None:
     if ctx.invoked_subcommand is not None:
         return
 
-    # do default operations
+    # default operations
     click.echo(f'`photo-scanner` is called')
 
 
 @photo_scanner.command()
 def preview() -> None:
-    # do subcommand operations
-    click.echo(f'`photo-scanner preview` is called')
-    quick_preview(progress=False)
+    quick_preview(progress=False, verbose=False)

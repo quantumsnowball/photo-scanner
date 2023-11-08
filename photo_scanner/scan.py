@@ -6,6 +6,9 @@ from photo_scanner.constants import DEFAULT_PROFILE, FAST_PROFILE, NAPS2_EXE
 from photo_scanner.crop import read_image
 
 
+PREVIEW_FILENAME = '.preview.jpg'
+
+
 def naps2(output: Path | str,
           *,
           profile: str,
@@ -31,14 +34,15 @@ def naps2(output: Path | str,
 
 
 def quick_preview(**kwargs: Any) -> None:
-    TEMP_NAME = Path('.preview.jpg')
+    file = Path(PREVIEW_FILENAME)
     # scan with fast profile to .preview.jpg
-    naps2(TEMP_NAME, profile=FAST_PROFILE, **kwargs)
+    naps2(file, profile=FAST_PROFILE, **kwargs)
     # display the image
-    image = read_image(TEMP_NAME)
-    image.show()
+    image = read_image(file)
+    image.show('Quick Preview')
     # delete the temp file
-    TEMP_NAME.unlink()
+    if file.exists():
+        file.unlink()
 
 
 def scan(output: str,
