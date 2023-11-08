@@ -3,7 +3,8 @@ import subprocess
 from typing import Any
 import click
 from photo_scanner.constants import DETAIL_PROFILE, FAST_PROFILE, NAPS2_EXE
-from photo_scanner.crop import read_image
+from photo_scanner.crop import preview_crop, read_image
+from photo_scanner.utils import read_cropping_config_yaml
 
 
 PREVIEW_FILENAME = '.preview.jpg'
@@ -42,8 +43,11 @@ def quick_preview(detail: bool, **kwargs: Any) -> None:
     naps2(file, profile=profile, **kwargs)
     # preview file should have been saved to disk
     try:
-        # display the image
+        # read the image
         image = read_image(file)
+        # apply the crop region to the image
+        crop_locs = read_cropping_config_yaml('config.yaml')
+        preview_crop(image, crop_locs)
         image.show('Quick Preview')
         # delete the temp file
         file.unlink()
