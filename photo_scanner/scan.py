@@ -46,9 +46,8 @@ def quick_preview(detail: bool, **kwargs: Any) -> None:
         # read the image
         image = read_image(file)
         # apply the crop region to the image
-        crop_locs = read_cropping_config_yaml('config.yaml')
+        crop_locs = read_cropping_config_yaml('config.yaml', high_dpi=detail)
         preview_crop(image, crop_locs)
-        image.show('Quick Preview')
         # delete the temp file
         file.unlink()
     except FileNotFoundError:

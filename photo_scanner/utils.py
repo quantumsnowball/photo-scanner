@@ -23,6 +23,14 @@ class CropLocation:
     y: int
     width: int
     height: int
+    high_dpi: bool
+
+    def __post_init__(self):
+        if self.high_dpi:
+            self.x *= 4
+            self.y *= 4
+            self.width *= 4
+            self.height *= 4
 
     @property
     def x_(self):
@@ -52,7 +60,7 @@ class CropLocation:
 CropLocations = list[CropLocation]
 
 
-def read_cropping_config_yaml(path: Path | str) -> CropLocations:
+def read_cropping_config_yaml(path: Path | str, high_dpi: bool = False) -> CropLocations:
     # as Path
     path = Path(path) if isinstance(path, str) else path
     # read yaml file
@@ -60,9 +68,10 @@ def read_cropping_config_yaml(path: Path | str) -> CropLocations:
         # parse
         locs: list[dict[str, int]] = yaml.safe_load(file)
         # return as CropLocations
-        crop_config = [CropLocation(**loc) for loc in locs]
+        crop_config = [CropLocation(high_dpi=high_dpi, **loc) for loc in locs]
         return crop_config
 
 
 if __name__ == '__main__':
-    read_cropping_config_yaml(Path('config.yaml'))
+    info = read_cropping_config_yaml(Path('config.yaml'), high_dpi=True)
+    print(info)
