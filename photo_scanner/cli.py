@@ -9,14 +9,15 @@ RAW_FILENAME = '.raw.jpg'
 
 @click.group(invoke_without_command=True)
 @click.pass_context
-def photo_scanner(ctx: click.Context) -> None:
+@click.option('-p', '--profile', default='middle', help='choose the dpi level')
+def photo_scanner(ctx: click.Context, profile: Profile) -> None:
     # ignore subcommand call
     if ctx.invoked_subcommand is not None:
         return
 
     # scan the raw source
     raw = Path(RAW_FILENAME)
-    scan(raw, verbose=False)
+    scan(raw, profile=profile, verbose=False)
     # crop the images
     # apply post processing enhancement
     # determin the correct sequencial filenames

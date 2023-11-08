@@ -54,8 +54,10 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
 
 def scan(output: Path | str,
+         profile: Profile,
          **kwargs: Any) -> None:
-    return naps2(output, profile='high', **kwargs)
+    click.secho(f'Scanning using profile `{profile}`', fg='yellow')
+    return naps2(output, profile=profile, **kwargs)
 
 
 if __name__ == '__main__':
