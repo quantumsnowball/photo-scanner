@@ -51,5 +51,5 @@ if __name__ == '__main__':
     # display the preview of the crop
     preview_crop(raw, crop_locs)
     # crop and save the photos
-    # images = crop_images(raw, Xs, Ys, WIDTH, HEIGHT)
-    # save_images(images, outdir=Path('.lab'))
+    images = crop_images(raw, Xs, Ys, WIDTH, HEIGHT)
+    save_images(images, outdir=Path('.lab'))
