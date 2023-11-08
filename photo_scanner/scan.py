@@ -45,7 +45,7 @@ def quick_preview(**kwargs: Any) -> None:
         file.unlink()
 
 
-def scan(output: str,
+def scan(output: Path | str,
          **kwargs: Any) -> None:
     return naps2(output, profile=DEFAULT_PROFILE, **kwargs)
 

@@ -1,6 +1,9 @@
+from pathlib import Path
 import click
-from photo_scanner.constants import FAST_PROFILE
-from photo_scanner.scan import quick_preview
+from photo_scanner.scan import quick_preview, scan
+
+
+RAW_FILENAME = '.raw.jpg'
 
 
 @click.group(invoke_without_command=True)
@@ -11,7 +14,8 @@ def photo_scanner(ctx: click.Context) -> None:
         return
 
     # default operations
-    click.echo(f'`photo-scanner` is called')
+    raw = Path(RAW_FILENAME)
+    scan(raw, verbose=False)
 
 
 @photo_scanner.command()
