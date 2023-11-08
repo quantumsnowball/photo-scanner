@@ -3,12 +3,6 @@ from PIL import Image, ImageDraw
 from utils import CropLocations, read_cropping_config_yaml, save_images
 
 
-Xs = (700, 2400)
-Ys = (120, 1400)
-WIDTH = 1550
-HEIGHT = 1080
-
-
 def read_image_array(name: Path,
                      rotation: int = 270) -> Image.Image:
     # open
@@ -23,7 +17,8 @@ def preview_crop(image: Image.Image,
                  crop_locs: CropLocations,
                  line_width: int = 5) -> None:
     # Draw the line on the image
-    draw = ImageDraw.Draw(image)
+    preview = image.copy()
+    draw = ImageDraw.Draw(preview)
     for l in crop_locs:
         draw.line(l.top, fill='red', width=line_width)
         draw.line(l.bottom, fill='red', width=line_width)
@@ -31,15 +26,13 @@ def preview_crop(image: Image.Image,
         draw.line(l.right, fill='green', width=line_width)
 
     # show
-    image.show()
+    preview.show()
 
 
 def crop_images(image: Image.Image,
-                Xs: tuple[int, ...],
-                Ys: tuple[int, ...],
-                width: int,
-                height: int) -> list[Image.Image]:
-    images = [image.crop((x, y, x+width, y+height)) for x in Xs for y in Ys]
+                crop_locs: CropLocations) -> list[Image.Image]:
+    images = [image.crop((loc.x, loc.y, loc.x_, loc.y_))
+              for loc in crop_locs]
     return images
 
 
@@ -51,5 +44,5 @@ if __name__ == '__main__':
     # display the preview of the crop
     preview_crop(raw, crop_locs)
     # crop and save the photos
-    images = crop_images(raw, Xs, Ys, WIDTH, HEIGHT)
+    images = crop_images(raw, crop_locs)
     save_images(images, outdir=Path('.lab'))
