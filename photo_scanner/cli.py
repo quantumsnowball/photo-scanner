@@ -1,4 +1,6 @@
 import click
+from photo_scanner.constants import FAST_PROFILE
+from photo_scanner.scan import quick_preview
 
 
 @click.group(invoke_without_command=True)
@@ -16,3 +18,4 @@ def photo_scanner(ctx: click.Context) -> None:
 def preview() -> None:
     # do subcommand operations
     click.echo(f'`photo-scanner preview` is called')
+    quick_preview(progress=False)

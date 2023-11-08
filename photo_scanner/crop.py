@@ -1,10 +1,12 @@
 from pathlib import Path
 from PIL import Image, ImageDraw
-from utils import CropLocations, read_cropping_config_yaml, save_images
+from photo_scanner.utils import CropLocations, read_cropping_config_yaml, save_images
 
 
-def read_image_array(name: Path,
-                     rotation: int = 270) -> Image.Image:
+def read_image(name: Path | str,
+               rotation: int = 270) -> Image.Image:
+    # as Path
+    name = Path(name) if isinstance(name, str) else name
     # open
     image = Image.open(name)
     # rotate the image
@@ -38,11 +40,11 @@ def crop_images(image: Image.Image,
 
 if __name__ == '__main__':
     # read the raw image
-    raw = read_image_array(Path('.lab/raw.jpg'))
+    raw = read_image(Path('.lab/raw.jpg'))
     # read the user coordinate and width height info
     crop_locs = read_cropping_config_yaml('config.yaml')
     # display the preview of the crop
     preview_crop(raw, crop_locs)
     # crop and save the photos
     images = crop_images(raw, crop_locs)
-    save_images(images, outdir=Path('.lab'))
+    save_images(images, outdir='.lab')
