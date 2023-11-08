@@ -3,8 +3,8 @@ import subprocess
 from typing import Any
 import click
 from photo_scanner.constants import NAPS2_EXE
-from photo_scanner.crop import preview_crop, read_image
-from photo_scanner.utils import Profile, read_cropping_config_yaml
+from photo_scanner.crop import preview_crop
+from photo_scanner.utils import Profile, read_cropping_config_yaml, read_image
 
 
 PREVIEW_FILENAME = '.preview.jpg'

@@ -5,6 +5,18 @@ from dataclasses import dataclass
 import yaml
 
 
+def read_image(name: Path | str,
+               rotation: int = 270) -> Image.Image:
+    # as Path
+    name = Path(name) if isinstance(name, str) else name
+    # open
+    image = Image.open(name)
+    # rotate the image
+    rotated = image.rotate(rotation, expand=True)
+    #
+    return rotated
+
+
 def save_images(images: list[Image.Image],
                 *,
                 outdir: Path | str,

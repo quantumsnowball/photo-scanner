@@ -1,18 +1,5 @@
-from pathlib import Path
 from PIL import Image, ImageDraw
-from photo_scanner.utils import CropLocations, read_cropping_config_yaml, save_images
-
-
-def read_image(name: Path | str,
-               rotation: int = 270) -> Image.Image:
-    # as Path
-    name = Path(name) if isinstance(name, str) else name
-    # open
-    image = Image.open(name)
-    # rotate the image
-    rotated = image.rotate(rotation, expand=True)
-    #
-    return rotated
+from photo_scanner.utils import CropLocations
 
 
 def preview_crop(image: Image.Image,
