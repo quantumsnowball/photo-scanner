@@ -1,6 +1,5 @@
 from pathlib import Path
-from re import template
-from typing import Any, Literal, get_type_hints
+from typing import Literal
 from PIL import Image
 from dataclasses import dataclass
 import yaml
@@ -8,9 +7,12 @@ import yaml
 
 def save_images(images: list[Image.Image],
                 *,
-                outdir: Path,
+                outdir: Path | str,
                 prefix: str = 'IMG',
                 ext: Literal['jpg', 'png'] = 'jpg') -> None:
+    # as Path
+    outdir = Path(outdir) if isinstance(outdir, str) else outdir
+    # save
     for i, image in enumerate(images):
         image.save(outdir / f'{prefix}_{i}.{ext}')
 
