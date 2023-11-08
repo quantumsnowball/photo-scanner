@@ -16,17 +16,24 @@ def save_images(images: list[Image.Image],
 
 @dataclass
 class CropLocation:
-    x: list[int]
-    y: list[int]
+    x: int
+    y: int
     width: int
     height: int
 
 
-def read_cropping_config_yaml(path: Path) -> CropLocation:
+CropLocations = list[CropLocation]
+
+
+def read_cropping_config_yaml(path: Path | str) -> CropLocations:
+    # as Path
+    path = Path(path) if isinstance(path, str) else path
+    # read yaml file
     with open(path) as file:
-        values: dict[str, Any] = yaml.safe_load(file)
-        crop_config = CropLocation(**values)
-        breakpoint()
+        # parse
+        locs: list[dict[str, int]] = yaml.safe_load(file)
+        # return as CropLocations
+        crop_config = [CropLocation(**loc) for loc in locs]
         return crop_config
 
 

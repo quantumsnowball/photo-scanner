@@ -1,8 +1,16 @@
-x:
-  - 700
-  - 2400
-y:
-  - 120
-  - 1400
-width: 1550
-height: 1080
+- x: 700
+  y: 120
+  width: 1550
+  height: 1080
+- x: 2400
+  y: 120
+  width: 1550
+  height: 1080
+- x: 700
+  y: 1400
+  width: 1550
+  height: 1080
+- x: 2400
+  y: 1400
+  width: 1550
+  height: 1080
