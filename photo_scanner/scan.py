@@ -37,16 +37,23 @@ def naps2(output: Path | str,
 def quick_preview(profile: Profile, **kwargs: Any) -> None:
     # as Path
     file = Path(PREVIEW_FILENAME)
+
     # scan with corresponding profile to .preview.jpg
     click.secho(f'Preview using profile `{profile}`', fg='yellow')
     naps2(file, profile=profile, **kwargs)
+
     # preview file should have been saved to disk
     try:
         # read the image
         image = read_image(file)
+
         # apply the crop region to the image
-        crop_locs = read_cropping_config_yaml('config.yaml', profile=profile)
-        preview_crop(image, crop_locs)
+        try:
+            crop_locs = read_cropping_config_yaml('config.yaml', profile=profile)
+            preview_crop(image, crop_locs)
+        except FileNotFoundError:
+            click.secho(f"Crop config file not found", fg='red')
+
         # delete the temp file
         file.unlink()
     except FileNotFoundError:
