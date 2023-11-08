@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # read the raw image
     raw = read_image(Path('.lab/raw.jpg'))
     # read the user coordinate and width height info
-    crop_locs = read_cropping_config_yaml('config.yaml')
+    crop_locs = read_cropping_config_yaml()
     # display the preview of the crop
     preview_crop(raw, crop_locs)
     # crop and save the photos

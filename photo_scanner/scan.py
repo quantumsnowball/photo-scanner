@@ -49,7 +49,7 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
         # apply the crop region to the image
         try:
-            crop_locs = read_cropping_config_yaml('config.yaml', profile=profile)
+            crop_locs = read_cropping_config_yaml(profile=profile)
             preview_crop(image, crop_locs)
         except FileNotFoundError:
             click.secho(f"Crop config file not found", fg='red')

@@ -69,13 +69,12 @@ class CropLocation:
 
 
 CropLocations = list[CropLocation]
+CROP_CONFIG_PATH = Path.home() / '.config/photo-scanner/crop.yaml'
 
 
-def read_cropping_config_yaml(path: Path | str, profile: Profile = 'low') -> CropLocations:
-    # as Path
-    path = Path(path) if isinstance(path, str) else path
+def read_cropping_config_yaml(profile: Profile = 'low') -> CropLocations:
     # read yaml file
-    with open(path) as file:
+    with open(CROP_CONFIG_PATH) as file:
         # parse
         locs: list[dict[str, int]] = yaml.safe_load(file)
         # return as CropLocations
@@ -84,5 +83,5 @@ def read_cropping_config_yaml(path: Path | str, profile: Profile = 'low') -> Cro
 
 
 if __name__ == '__main__':
-    info = read_cropping_config_yaml(Path('config.yaml'), profile='middle')
+    info = read_cropping_config_yaml(profile='middle')
     print(info)
