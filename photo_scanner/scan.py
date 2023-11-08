@@ -2,11 +2,11 @@ from pathlib import Path
 import subprocess
 from typing import Any
 import click
-from photo_scanner.constants import NAPS2_EXE
 from photo_scanner.crop import preview_crop
 from photo_scanner.utils import Profile, read_crop_config, read_image
 
 
+NAPS2_EXE = r'/mnt/c/Program Files/NAPS2/NAPS2.Console.exe'
 PREVIEW_FILENAME = '.preview.jpg'
 
 
