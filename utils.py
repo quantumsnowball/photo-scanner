@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, get_type_hints
 from PIL import Image
 from dataclasses import dataclass
 import yaml
@@ -16,15 +16,15 @@ def save_images(images: list[Image.Image],
 
 @dataclass
 class CropLocation:
-    x: int
-    y: int
+    x: list[int]
+    y: list[int]
     width: int
     height: int
 
 
 def read_cropping_config_yaml(path: Path) -> CropLocation:
     with open(path) as file:
-        values = yaml.safe_load(file)
+        values: dict[str, Any] = yaml.safe_load(file)
         crop_config = CropLocation(**values)
         breakpoint()
         return crop_config
