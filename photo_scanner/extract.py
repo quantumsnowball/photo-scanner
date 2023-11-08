@@ -154,12 +154,3 @@ def save_images(images: list[MatLike],
     for i, image in enumerate(images):
         image_path = str(root / Path(f'{prefix}_{i+1}.jpg'))
         cv2.imwrite(image_path, image, (cv2.IMWRITE_JPEG_QUALITY, quality, ))
-
-
-if __name__ == '__main__':
-    raw = read_rgb_image(Path('.lab/raw.jpg'))
-    images = manually_split(raw, 2300, 1200)
-    gray_images = [convert_to_gray_scale(image) for image in images]
-    contours = [find_best_contour(gray) for gray in gray_images]
-    cropped_images = crop_images(images, contours)
-    save_images(cropped_images, root=Path('.lab'), quality=75)

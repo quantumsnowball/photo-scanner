@@ -65,7 +65,3 @@ def scan(output: Path | str,
          **kwargs: Any) -> None:
     click.secho(f'Scanning using profile `{profile}`', fg='yellow')
     return naps2(output, profile=profile, **kwargs)
-
-
-if __name__ == '__main__':
-    pass

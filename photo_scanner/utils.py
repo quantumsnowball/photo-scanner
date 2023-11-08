@@ -80,8 +80,3 @@ def read_cropping_config_yaml(profile: Profile = 'low') -> CropLocations:
         # return as CropLocations
         crop_config = [CropLocation(profile=profile, **loc) for loc in locs]
         return crop_config
-
-
-if __name__ == '__main__':
-    info = read_cropping_config_yaml(profile='middle')
-    print(info)
