@@ -13,11 +13,16 @@ def photo_scanner(ctx: click.Context) -> None:
     if ctx.invoked_subcommand is not None:
         return
 
-    # default operations
+    # scan the raw source
     raw = Path(RAW_FILENAME)
     scan(raw, verbose=False)
+    # crop the images
+    # apply post processing enhancement
+    # determin the correct sequencial filenames
+    # write images to disk
 
 
 @photo_scanner.command()
-def preview() -> None:
-    quick_preview(progress=False, verbose=False)
+@click.option('--detail', default=False, is_flag=True, help='use high dpi to preview')
+def preview(detail: bool) -> None:
+    quick_preview(detail, verbose=False)

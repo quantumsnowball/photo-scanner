@@ -1,8 +1,8 @@
 from pathlib import Path
 import subprocess
 from typing import Any
-
-from photo_scanner.constants import DEFAULT_PROFILE, FAST_PROFILE, NAPS2_EXE
+import click
+from photo_scanner.constants import DETAIL_PROFILE, FAST_PROFILE, NAPS2_EXE
 from photo_scanner.crop import read_image
 
 
@@ -33,21 +33,27 @@ def naps2(output: Path | str,
     _ = subprocess.run(cmd)
 
 
-def quick_preview(**kwargs: Any) -> None:
+def quick_preview(detail: bool, **kwargs: Any) -> None:
+    # as Path
     file = Path(PREVIEW_FILENAME)
-    # scan with fast profile to .preview.jpg
-    naps2(file, profile=FAST_PROFILE, **kwargs)
-    # display the image
-    image = read_image(file)
-    image.show('Quick Preview')
-    # delete the temp file
-    if file.exists():
+    # scan with corresponding profile to .preview.jpg
+    profile = FAST_PROFILE if not detail else DETAIL_PROFILE
+    click.secho(f'Preview using profile `{profile}`', fg='yellow')
+    naps2(file, profile=profile, **kwargs)
+    # preview file should have been saved to disk
+    try:
+        # display the image
+        image = read_image(file)
+        image.show('Quick Preview')
+        # delete the temp file
         file.unlink()
+    except FileNotFoundError:
+        click.secho(f"Preview file doesn't exist", fg='red')
 
 
 def scan(output: Path | str,
          **kwargs: Any) -> None:
-    return naps2(output, profile=DEFAULT_PROFILE, **kwargs)
+    return naps2(output, profile=DETAIL_PROFILE, **kwargs)
 
 
 if __name__ == '__main__':
