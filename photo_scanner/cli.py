@@ -1,6 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.scan import quick_preview, scan
+from photo_scanner.utils import Profile
 
 
 RAW_FILENAME = '.raw.jpg'
@@ -23,6 +24,6 @@ def photo_scanner(ctx: click.Context) -> None:
 
 
 @photo_scanner.command()
-@click.option('--detail', default=False, is_flag=True, help='use high dpi to preview')
-def preview(detail: bool) -> None:
-    quick_preview(detail, verbose=False)
+@click.option('-p', '--profile', default='low', help='choose the dpi level')
+def preview(profile: Profile) -> None:
+    quick_preview(profile, verbose=False)

@@ -17,20 +17,24 @@ def save_images(images: list[Image.Image],
         image.save(outdir / f'{prefix}_{i}.{ext}')
 
 
+Profile = Literal['low', 'middle', 'high']
+
+
 @dataclass
 class CropLocation:
     x: int
     y: int
     width: int
     height: int
-    high_dpi: bool
+    profile: Profile
 
     def __post_init__(self):
-        if self.high_dpi:
-            self.x *= 4
-            self.y *= 4
-            self.width *= 4
-            self.height *= 4
+        # scale the factor according to profile
+        mul = {'low': 1, 'middle': 2, 'high': 4}[self.profile]
+        self.x *= mul
+        self.y *= mul
+        self.width *= mul
+        self.height *= mul
 
     @property
     def x_(self):
@@ -60,7 +64,7 @@ class CropLocation:
 CropLocations = list[CropLocation]
 
 
-def read_cropping_config_yaml(path: Path | str, high_dpi: bool = False) -> CropLocations:
+def read_cropping_config_yaml(path: Path | str, profile: Profile = 'low') -> CropLocations:
     # as Path
     path = Path(path) if isinstance(path, str) else path
     # read yaml file
@@ -68,10 +72,10 @@ def read_cropping_config_yaml(path: Path | str, high_dpi: bool = False) -> CropL
         # parse
         locs: list[dict[str, int]] = yaml.safe_load(file)
         # return as CropLocations
-        crop_config = [CropLocation(high_dpi=high_dpi, **loc) for loc in locs]
+        crop_config = [CropLocation(profile=profile, **loc) for loc in locs]
         return crop_config
 
 
 if __name__ == '__main__':
-    info = read_cropping_config_yaml(Path('config.yaml'), high_dpi=True)
+    info = read_cropping_config_yaml(Path('config.yaml'), profile='middle')
     print(info)
