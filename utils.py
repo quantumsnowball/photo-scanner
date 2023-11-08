@@ -1,4 +1,5 @@
 from pathlib import Path
+from re import template
 from typing import Any, Literal, get_type_hints
 from PIL import Image
 from dataclasses import dataclass
@@ -20,6 +21,30 @@ class CropLocation:
     y: int
     width: int
     height: int
+
+    @property
+    def x_(self):
+        return self.x+self.width
+
+    @property
+    def y_(self):
+        return self.y+self.height
+
+    @property
+    def top(self):
+        return ((self.x, self.y), (self.x_, self.y))
+
+    @property
+    def bottom(self):
+        return ((self.x, self.y_), (self.x_, self.y_))
+
+    @property
+    def left(self):
+        return ((self.x, self.y), (self.x, self.y_))
+
+    @property
+    def right(self):
+        return ((self.x_, self.y), (self.x_, self.y_))
 
 
 CropLocations = list[CropLocation]
