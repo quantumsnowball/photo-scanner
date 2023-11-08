@@ -4,7 +4,7 @@ from typing import Any
 import click
 from photo_scanner.constants import NAPS2_EXE
 from photo_scanner.crop import preview_crop
-from photo_scanner.utils import Profile, read_cropping_config_yaml, read_image
+from photo_scanner.utils import Profile, read_crop_config, read_image
 
 
 PREVIEW_FILENAME = '.preview.jpg'
@@ -49,7 +49,7 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
         # apply the crop region to the image
         try:
-            crop_locs = read_cropping_config_yaml(profile=profile)
+            crop_locs = read_crop_config(profile=profile)
             preview_crop(image, crop_locs)
         except FileNotFoundError:
             click.secho(f"Crop config file not found", fg='red')

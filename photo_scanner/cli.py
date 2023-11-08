@@ -2,7 +2,7 @@ from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
 from photo_scanner.scan import quick_preview, scan
-from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_cropping_config_yaml, read_image, save_images
+from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_crop_config, read_image, save_images
 
 
 RAW_FILE = Path('.raw.jpg')
@@ -21,7 +21,7 @@ def photo_scanner(ctx: click.Context, profile: Profile) -> None:
     # read the raw image
     raw_image = read_image(RAW_FILE)
     # crop the images
-    crop_locs = read_cropping_config_yaml(profile)
+    crop_locs = read_crop_config(profile)
     cropped_images = crop_images(raw_image, crop_locs)
     # apply post processing enhancement
     # determin the correct sequencial filenames

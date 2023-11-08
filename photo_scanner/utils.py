@@ -84,7 +84,7 @@ CropLocations = list[CropLocation]
 CROP_CONFIG_PATH = Path.home() / '.config/photo-scanner/crop.yaml'
 
 
-def read_cropping_config_yaml(profile: Profile = 'low') -> CropLocations:
+def read_crop_config(profile: Profile = 'low') -> CropLocations:
     # read yaml file
     with open(CROP_CONFIG_PATH) as file:
         # parse
