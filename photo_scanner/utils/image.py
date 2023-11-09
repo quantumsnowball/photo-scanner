@@ -2,6 +2,7 @@ from pathlib import Path
 from PIL import Image
 from typing import Literal
 import cv2
+from cv2.typing import MatLike
 import numpy as np
 import photo_scanner.utils.message as msg
 from photo_scanner.utils import highest_filename
@@ -34,16 +35,20 @@ def save_images(images: list[Image.Image],
         msg.success(f'Saved: {filename}')
 
 
-def show_image(image: Image.Image,
+def show_image(image: Image.Image | MatLike,
                *,
                name: str = 'Image',
                x: int = 100,
                y: int = 100,
                width: int = 1024,
                height: int = 768,) -> None:
+    # ensure nd array
+    image = np.array(image) if isinstance(image, Image.Image) else image
+    # display
     cv2.namedWindow(name, cv2.WINDOW_NORMAL)
     cv2.moveWindow(name, x, y)
     cv2.resizeWindow(name, width, height)
-    cv2.imshow(name, cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR))
+    cv2.imshow(name, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+    # wait for discard keypress
     cv2.waitKey(0)
     cv2.destroyAllWindows()
