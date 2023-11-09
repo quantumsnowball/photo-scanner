@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
-from photo_scanner.enhancement import apply_autocontrast, show_diff
+from photo_scanner.enhancement import apply_autocontrast, apply_equalize, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
@@ -15,12 +15,14 @@ RAW_FILE = Path('.raw.jpg')
 @click.group(invoke_without_command=True)
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
-@click.option('--autocontrast/--no-autocontrast', default=True, help='auto contrast enhancement')
+@click.option('--autocontrast/--no-autocontrast', default=True, help='autocontrast enhancement')
+@click.option('--equalize/--no-equalize', default=False, help='equalize enhancement')
 @click.pass_context
 def photo_scanner(ctx: click.Context,
                   profile: Profile,
                   quality: int,
-                  autocontrast: bool) -> None:
+                  autocontrast: bool,
+                  equalize: bool) -> None:
     # always welcome the user
     msg.welcome()
 
@@ -44,6 +46,9 @@ def photo_scanner(ctx: click.Context,
         if autocontrast:
             images = [apply_autocontrast(im) for im in images]
             msg.info('Autocontrast: ON')
+        if equalize:
+            images = [apply_equalize(im) for im in images]
+            msg.info('Equalize: ON')
         # write images to disk
         save_images(images, quality=quality)
         # delete the raw image

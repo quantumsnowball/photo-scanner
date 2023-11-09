@@ -31,6 +31,22 @@ def apply_autocontrast(image: Image.Image) -> Image.Image:
     return ops.autocontrast(image)
 
 
+def apply_equalize(image: Image.Image) -> Image.Image:
+    '''
+    PIL.ImageOps.equalize(image, mask=None)[source]
+    Equalize the image histogram. This function applies a non-linear mapping to the input image, in order to create a uniform distribution of grayscale values in the output image.
+
+    PARAMETERS:
+    image – The image to equalize.
+
+    mask – An optional mask. If given, only the pixels selected by the mask are included in the analysis.
+
+    RETURNS:
+    An image.
+    '''
+    return ops.equalize(image)
+
+
 def show_diff(original: Path | str, target: Path | str) -> None:
     # read both images
     original_image = read_image(original, rotation=0)
