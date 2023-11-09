@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
-from photo_scanner.enhancement import auto_contrast
+from photo_scanner.enhancement import auto_contrast, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
@@ -61,6 +61,14 @@ def preview(profile: Profile) -> None:
         quick_preview(profile, verbose=False)
         #
         msg.success(f'Preview displayed Successfully')
+
+
+@photo_scanner.command()
+@click.argument('original', nargs=1)
+@click.argument('target', nargs=1)
+def diff(original: str, target: str) -> None:
+    # show diff
+    show_diff(original, target)
 
 
 @photo_scanner.command()
