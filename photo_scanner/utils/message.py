@@ -18,6 +18,10 @@ def failure(text: str) -> None:
     click.secho(text, fg='red')
 
 
+def info(text: str) -> None:
+    click.secho(text, fg='yellow')
+
+
 def prompt(text: str,
            *,
            fg: str,

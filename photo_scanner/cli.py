@@ -1,6 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
+from photo_scanner.enhancement import apply_autocontrast, apply_equalize, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
@@ -14,8 +15,14 @@ RAW_FILE = Path('.raw.jpg')
 @click.group(invoke_without_command=True)
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
+@click.option('--autocontrast/--no-autocontrast', default=True, help='autocontrast enhancement')
+@click.option('--equalize/--no-equalize', default=False, help='equalize enhancement')
 @click.pass_context
-def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
+def photo_scanner(ctx: click.Context,
+                  profile: Profile,
+                  quality: int,
+                  autocontrast: bool,
+                  equalize: bool) -> None:
     # always welcome the user
     msg.welcome()
 
@@ -34,10 +41,16 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
         # read the raw image
         raw_image = read_image(RAW_FILE)
         # crop the images
-        cropped_images = crop_images(raw_image, crop_locs)
+        images = crop_images(raw_image, crop_locs)
         # apply post processing enhancement
+        if autocontrast:
+            images = [apply_autocontrast(im) for im in images]
+            msg.info('Autocontrast: ON')
+        if equalize:
+            images = [apply_equalize(im) for im in images]
+            msg.info('Equalize: ON')
         # write images to disk
-        save_images(cropped_images, quality=quality)
+        save_images(images, quality=quality)
         # delete the raw image
         RAW_FILE.unlink()
 
@@ -53,6 +66,14 @@ def preview(profile: Profile) -> None:
         quick_preview(profile, verbose=False)
         #
         msg.success(f'Preview displayed Successfully')
+
+
+@photo_scanner.command()
+@click.argument('original', nargs=1)
+@click.argument('target', nargs=1)
+def diff(original: str, target: str) -> None:
+    # show diff
+    show_diff(original, target)
 
 
 @photo_scanner.command()
