@@ -3,9 +3,9 @@ from typing import Literal
 from PIL import Image
 from dataclasses import dataclass
 import cv2
-from cv2.typing import MatLike
 import yaml
 import numpy as np
+import photo_scanner.utils.message as msg
 
 
 ImageFormats = Literal['jpg', 'png']
@@ -41,7 +41,9 @@ def save_images(images: list[Image.Image],
     # save
     highest = highest_filename(ext)
     for i, image in enumerate(images):
-        image.save(Path(f'{highest+i+1}.{ext}'), quality=quality)
+        filename = Path(f'{highest+i+1}.{ext}')
+        image.save(filename, quality=quality)
+        msg.success(f'Saved: {filename}')
 
 
 def show_image(image: Image.Image,

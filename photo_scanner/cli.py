@@ -38,8 +38,6 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
         save_images(cropped_images, quality=quality)
         # delete the raw image
         RAW_FILE.unlink()
-        #
-        msg.success(f'Successfully cropped {len(cropped_images)} images')
 
 
 @photo_scanner.command()
