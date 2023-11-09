@@ -17,12 +17,13 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
     if ctx.invoked_subcommand is not None:
         return
 
+    # ensure config is valid
+    crop_locs = read_crop_config(profile)
     # scan the raw source
     scan(RAW_FILE, profile=profile, verbose=False)
     # read the raw image
     raw_image = read_image(RAW_FILE)
     # crop the images
-    crop_locs = read_crop_config(profile)
     cropped_images = crop_images(raw_image, crop_locs)
     # apply post processing enhancement
     # write images to disk
