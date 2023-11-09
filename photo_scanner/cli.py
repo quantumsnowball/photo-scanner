@@ -43,6 +43,7 @@ def photo_scanner(ctx: click.Context,
         # apply post processing enhancement
         if autocontrast:
             images = [apply_autocontrast(im) for im in images]
+            msg.info('Autocontrast: ON')
         # write images to disk
         save_images(images, quality=quality)
         # delete the raw image
