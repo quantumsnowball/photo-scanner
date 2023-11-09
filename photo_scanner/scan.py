@@ -1,11 +1,12 @@
 from pathlib import Path
 import subprocess
 from typing import Any
+import click
+from photo_scanner.crop import preview_crop
+from photo_scanner.utils import Profile, read_crop_config, read_image
 
-from photo_scanner.constants import DEFAULT_PROFILE, FAST_PROFILE, NAPS2_EXE
-from photo_scanner.crop import read_image
 
-
+NAPS2_EXE = r'/mnt/c/Program Files/NAPS2/NAPS2.Console.exe'
 PREVIEW_FILENAME = '.preview.jpg'
 
 
@@ -33,22 +34,34 @@ def naps2(output: Path | str,
     _ = subprocess.run(cmd)
 
 
-def quick_preview(**kwargs: Any) -> None:
+def quick_preview(profile: Profile, **kwargs: Any) -> None:
+    # as Path
     file = Path(PREVIEW_FILENAME)
-    # scan with fast profile to .preview.jpg
-    naps2(file, profile=FAST_PROFILE, **kwargs)
-    # display the image
-    image = read_image(file)
-    image.show('Quick Preview')
-    # delete the temp file
-    if file.exists():
+
+    # scan with corresponding profile to .preview.jpg
+    click.secho(f'Preview using profile `{profile}`', fg='yellow')
+    naps2(file, profile=profile, **kwargs)
+
+    # preview file should have been saved to disk
+    try:
+        # read the image
+        image = read_image(file)
+
+        # apply the crop region to the image
+        try:
+            crop_locs = read_crop_config(profile=profile)
+            preview_crop(image, crop_locs)
+        except FileNotFoundError:
+            click.secho(f"Crop config file not found", fg='red')
+
+        # delete the temp file
         file.unlink()
+    except FileNotFoundError:
+        click.secho(f"Preview file doesn't exist", fg='red')
 
 
-def scan(output: str,
+def scan(output: Path | str,
+         profile: Profile,
          **kwargs: Any) -> None:
-    return naps2(output, profile=DEFAULT_PROFILE, **kwargs)
-
-
-if __name__ == '__main__':
-    pass
+    click.secho(f'Scanning using profile `{profile}`', fg='yellow')
+    return naps2(output, profile=profile, **kwargs)
