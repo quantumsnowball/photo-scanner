@@ -2,7 +2,10 @@ from pathlib import Path
 from typing import Literal
 from PIL import Image
 from dataclasses import dataclass
+import cv2
 import yaml
+import numpy as np
+import photo_scanner.utils.message as msg
 
 
 ImageFormats = Literal['jpg', 'png']
@@ -38,7 +41,24 @@ def save_images(images: list[Image.Image],
     # save
     highest = highest_filename(ext)
     for i, image in enumerate(images):
-        image.save(Path(f'{highest+i+1}.{ext}'), quality=quality)
+        filename = Path(f'{highest+i+1}.{ext}')
+        image.save(filename, quality=quality)
+        msg.success(f'Saved: {filename}')
+
+
+def show_image(image: Image.Image,
+               *,
+               name: str = 'Image',
+               x: int = 100,
+               y: int = 100,
+               width: int = 1024,
+               height: int = 768,) -> None:
+    cv2.namedWindow(name, cv2.WINDOW_NORMAL)
+    cv2.moveWindow(name, x, y)
+    cv2.resizeWindow(name, width, height)
+    cv2.imshow(name, cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 Profile = Literal['low', 'middle', 'high']
