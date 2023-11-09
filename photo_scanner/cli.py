@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
-from photo_scanner.scan import quick_preview, scan
+from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_crop_config, read_image, save_images
 import photo_scanner.utils.message as msg
 
@@ -57,6 +57,12 @@ def preview(profile: Profile) -> None:
 
 @photo_scanner.command()
 def check() -> None:
+    # check naps2 exe
+    if Path(NAPS2_EXE).exists():
+        msg.success(f'NAPS2 executible exists: {NAPS2_EXE}')
+    else:
+        msg.failure(f'NAPS2 executible not found')
+    # check config yaml
     if Path(CROP_CONFIG_PATH).exists():
         msg.success(f'Crop config file exists: {CROP_CONFIG_PATH}')
     else:

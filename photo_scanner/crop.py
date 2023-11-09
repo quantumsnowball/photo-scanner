@@ -15,8 +15,6 @@ def preview_crop(image: Image.Image,
         draw.line(l.right, fill='green', width=l.line_width)
 
     # show
-    # bug: window not showing if main program still running
-    # preview.show()
     show_image(preview, name='Preview')
 
 
