@@ -1,6 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
+from photo_scanner.enhancement import auto_contrast
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
@@ -14,8 +15,12 @@ RAW_FILE = Path('.raw.jpg')
 @click.group(invoke_without_command=True)
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
+@click.option('--autocontrast/--no-autocontrast', default=True, help='auto contrast enhancement')
 @click.pass_context
-def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
+def photo_scanner(ctx: click.Context,
+                  profile: Profile,
+                  quality: int,
+                  autocontrast: bool) -> None:
     # always welcome the user
     msg.welcome()
 
@@ -34,10 +39,13 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
         # read the raw image
         raw_image = read_image(RAW_FILE)
         # crop the images
-        cropped_images = crop_images(raw_image, crop_locs)
+        images = crop_images(raw_image, crop_locs)
         # apply post processing enhancement
+        if autocontrast:
+            print('applying autocontrast')
+            images = [auto_contrast(im) for im in images]
         # write images to disk
-        save_images(cropped_images, quality=quality)
+        save_images(images, quality=quality)
         # delete the raw image
         RAW_FILE.unlink()
 
