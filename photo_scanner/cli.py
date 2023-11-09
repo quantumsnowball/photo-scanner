@@ -22,7 +22,7 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
         return
 
     while (True):
-        # prompt_default_
+        # prompt
         if msg.prompt_default_accept(click.style('Continue scan and crop?', fg='cyan')):
             break
         # ensure config is valid
@@ -45,12 +45,19 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
 @photo_scanner.command()
 @click.option('-p', '--profile', default='low', help='choose the dpi level')
 def preview(profile: Profile) -> None:
-    quick_preview(profile, verbose=False)
+    while (True):
+        # prompt
+        if msg.prompt_default_accept(click.style('Continue preview?', fg='cyan')):
+            break
+        # preview
+        quick_preview(profile, verbose=False)
+        #
+        msg.success(f'Preview displayed Successfully')
 
 
 @photo_scanner.command()
 def check() -> None:
     if Path(CROP_CONFIG_PATH).exists():
-        click.secho(f'Crop config file exists: {CROP_CONFIG_PATH}', fg='green')
+        msg.success(f'Crop config file exists: {CROP_CONFIG_PATH}')
     else:
-        click.secho(f'Crop config file not found', fg='red')
+        msg.failure(f'Crop config file not found')

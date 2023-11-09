@@ -14,6 +14,10 @@ def success(text: str) -> None:
     click.secho(text, fg='green')
 
 
+def failure(text: str) -> None:
+    click.secho(text, fg='red')
+
+
 def prompt(text: str,
            *,
            fg: str,
@@ -35,7 +39,6 @@ def prompt_default_accept(text: str,
         # user specificially reject to yield Positive
         choice = str(ans).upper() == 'N'
         return choice
-    except Exception as e:
-        print(e)
+    except Exception:
         # default yield True
         return True

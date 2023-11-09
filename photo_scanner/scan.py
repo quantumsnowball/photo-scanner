@@ -56,6 +56,7 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
         # delete the temp file
         file.unlink()
+        print('deleted')
     except FileNotFoundError:
         click.secho(f"Preview file doesn't exist", fg='red')
 
@@ -64,4 +65,4 @@ def scan(output: Path | str,
          profile: Profile,
          **kwargs: Any) -> None:
     click.secho(f'Scanning using profile `{profile}`', fg='yellow')
-    return naps2(output, profile=profile, **kwargs)
+    naps2(output, profile=profile, **kwargs)
