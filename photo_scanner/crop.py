@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from photo_scanner.utils import CropLocations
-from photo_scanner.utils import show_image
+from photo_scanner.utils.image import show_image
 
 
 def preview_crop(image: Image.Image,

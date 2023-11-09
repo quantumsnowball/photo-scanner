@@ -2,7 +2,8 @@ from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
-from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_crop_config, read_image, save_images
+from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_crop_config
+from photo_scanner.utils.image import read_image, save_images
 import photo_scanner.utils.message as msg
 
 
