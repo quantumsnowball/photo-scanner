@@ -3,6 +3,7 @@ import click
 from photo_scanner.crop import crop_images
 from photo_scanner.scan import quick_preview, scan
 from photo_scanner.utils import CROP_CONFIG_PATH, Profile, read_crop_config, read_image, save_images
+import photo_scanner.utils.message as msg
 
 
 RAW_FILE = Path('.raw.jpg')
@@ -13,17 +14,16 @@ RAW_FILE = Path('.raw.jpg')
 @click.option('-qt', '--quality', default=85, help='image quality level')
 @click.pass_context
 def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
+    # always welcome the user
+    msg.welcome()
+
     # ignore subcommand call
     if ctx.invoked_subcommand is not None:
         return
 
     while (True):
-        click.secho((
-            '###################################\n'
-            '########## photo-scanner ##########\n'
-            '###################################'
-        ), fg='blue')
-        if click.prompt(click.style('Continue scan and crop (Y/n)?', fg='cyan'), prompt_suffix=' ', default='Y', show_default=False).upper() == 'N':
+        # prompt_default_
+        if msg.prompt_default_accept(click.style('Continue scan and crop?', fg='cyan')):
             break
         # ensure config is valid
         crop_locs = read_crop_config(profile)
@@ -39,7 +39,7 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
         # delete the raw image
         RAW_FILE.unlink()
         #
-        click.secho(f'Successfully cropped {len(cropped_images)} images', fg='green')
+        msg.success(f'Successfully cropped {len(cropped_images)} images')
 
 
 @photo_scanner.command()
