@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from photo_scanner.crop import crop_images
-from photo_scanner.enhancement import auto_contrast, show_diff
+from photo_scanner.enhancement import apply_autocontrast, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
@@ -42,8 +42,7 @@ def photo_scanner(ctx: click.Context,
         images = crop_images(raw_image, crop_locs)
         # apply post processing enhancement
         if autocontrast:
-            print('applying autocontrast')
-            images = [auto_contrast(im) for im in images]
+            images = [apply_autocontrast(im) for im in images]
         # write images to disk
         save_images(images, quality=quality)
         # delete the raw image
