@@ -3,7 +3,8 @@ import subprocess
 from typing import Any
 import click
 from photo_scanner.crop import preview_crop
-from photo_scanner.utils import Profile, read_crop_config
+from photo_scanner.utils import Profile
+from photo_scanner.utils.config import read_crop_config
 from photo_scanner.utils.image import read_image
 
 

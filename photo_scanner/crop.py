@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-from photo_scanner.utils import CropLocations
+from photo_scanner.utils.config import CropLocations
 from photo_scanner.utils.image import show_image
 
 
