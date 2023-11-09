@@ -17,19 +17,29 @@ def photo_scanner(ctx: click.Context, profile: Profile, quality: int) -> None:
     if ctx.invoked_subcommand is not None:
         return
 
-    # ensure config is valid
-    crop_locs = read_crop_config(profile)
-    # scan the raw source
-    scan(RAW_FILE, profile=profile, verbose=False)
-    # read the raw image
-    raw_image = read_image(RAW_FILE)
-    # crop the images
-    cropped_images = crop_images(raw_image, crop_locs)
-    # apply post processing enhancement
-    # write images to disk
-    save_images(cropped_images, quality=quality)
-    # delete the raw image
-    RAW_FILE.unlink()
+    while (True):
+        click.secho((
+            '###################################\n'
+            '########## photo-scanner ##########\n'
+            '###################################'
+        ), fg='blue')
+        if click.prompt(click.style('Continue scan and crop (Y/n)?', fg='cyan'), prompt_suffix=' ', default='Y', show_default=False).upper() == 'N':
+            break
+        # ensure config is valid
+        crop_locs = read_crop_config(profile)
+        # scan the raw source
+        scan(RAW_FILE, profile=profile, verbose=False)
+        # read the raw image
+        raw_image = read_image(RAW_FILE)
+        # crop the images
+        cropped_images = crop_images(raw_image, crop_locs)
+        # apply post processing enhancement
+        # write images to disk
+        save_images(cropped_images, quality=quality)
+        # delete the raw image
+        RAW_FILE.unlink()
+        #
+        click.secho(f'Successfully cropped {len(cropped_images)} images', fg='green')
 
 
 @photo_scanner.command()
