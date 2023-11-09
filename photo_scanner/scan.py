@@ -6,6 +6,7 @@ from photo_scanner.crop import preview_crop
 from photo_scanner.utils import Profile
 from photo_scanner.utils.config import read_crop_config
 from photo_scanner.utils.image import read_image
+import photo_scanner.utils.message as msg
 
 
 NAPS2_EXE = r'/mnt/c/Program Files/NAPS2/NAPS2.Console.exe'
@@ -41,7 +42,7 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
     file = Path(PREVIEW_FILENAME)
 
     # scan with corresponding profile to .preview.jpg
-    click.secho(f'Preview using profile `{profile}`', fg='yellow')
+    msg.info(f'Preview using profile `{profile}`')
     naps2(file, profile=profile, **kwargs)
 
     # preview file should have been saved to disk
@@ -66,5 +67,5 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 def scan(output: Path | str,
          profile: Profile,
          **kwargs: Any) -> None:
-    click.secho(f'Scanning using profile `{profile}`', fg='yellow')
+    msg.info(f'Scanning using profile `{profile}`')
     naps2(output, profile=profile, **kwargs)
