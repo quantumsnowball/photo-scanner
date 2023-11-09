@@ -4,7 +4,7 @@ from photo_scanner.crop import crop_images
 from photo_scanner.enhancement import apply_autocontrast, apply_equalize, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
 from photo_scanner.utils import Profile
-from photo_scanner.utils.config import CROP_CONFIG_PATH, read_crop_config
+from photo_scanner.utils.config import LAYOUT_CONFIG_PATH, read_crop_config
 from photo_scanner.utils.image import read_image, save_images
 import photo_scanner.utils.message as msg
 
@@ -84,7 +84,7 @@ def check() -> None:
     else:
         msg.failure(f'NAPS2 executible not found')
     # check config yaml
-    if Path(CROP_CONFIG_PATH).exists():
-        msg.success(f'Crop config file exists: {CROP_CONFIG_PATH}')
+    if Path(LAYOUT_CONFIG_PATH).exists():
+        msg.success(f'Layout config file exists: {LAYOUT_CONFIG_PATH}')
     else:
-        msg.failure(f'Crop config file not found')
+        msg.failure(f'Layout config file not found')
