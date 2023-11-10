@@ -32,7 +32,7 @@ def photo_scanner(ctx: click.Context,
 
     while (True):
         # prompt
-        if msg.prompt_default_accept(click.style('Continue scan and crop?', fg='cyan')):
+        if msg.prompt_default_accept(click.style('Continue scan and crop?')):
             break
         # ensure config is valid
         crop_locs = read_crop_config(profile)
