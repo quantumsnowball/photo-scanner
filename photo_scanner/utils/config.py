@@ -4,6 +4,10 @@ import yaml
 from photo_scanner.utils import Profile
 
 
+Point = tuple[int, int]
+Line = tuple[Point, Point]
+
+
 @dataclass
 class CropLocation:
     x: int
@@ -14,14 +18,20 @@ class CropLocation:
 
     def __post_init__(self):
         # scale the factor according to profile
-        self.x *= self.factor
-        self.y *= self.factor
-        self.width *= self.factor
-        self.height *= self.factor
+        self.x = round(self.x*self.factor)
+        self.y = round(self.y*self.factor)
+        self.width = round(self.width*self.factor)
+        self.height = round(self.height*self.factor)
 
     @property
-    def factor(self) -> int:
-        return {'low': 1, 'middle': 2, 'high': 4}[self.profile]
+    def factor(self) -> float:
+        factors = {
+            'lowest': 1/3,
+            'low': 1,
+            'middle': 2,
+            'high': 4
+        }
+        return factors[self.profile]
 
     @property
     def x_(self) -> int:
@@ -32,24 +42,24 @@ class CropLocation:
         return self.y+self.height
 
     @property
-    def top(self):
+    def top(self) -> Line:
         return ((self.x, self.y), (self.x_, self.y))
 
     @property
-    def bottom(self):
+    def bottom(self) -> Line:
         return ((self.x, self.y_), (self.x_, self.y_))
 
     @property
-    def left(self):
+    def left(self) -> Line:
         return ((self.x, self.y), (self.x, self.y_))
 
     @property
-    def right(self):
+    def right(self) -> Line:
         return ((self.x_, self.y), (self.x_, self.y_))
 
     @property
     def line_width(self) -> int:
-        return 5 * self.factor
+        return round(5 * self.factor)
 
 
 CropLocations = list[CropLocation]

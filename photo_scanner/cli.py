@@ -56,7 +56,7 @@ def photo_scanner(ctx: click.Context,
 
 
 @photo_scanner.command()
-@click.option('-p', '--profile', default='low', help='choose the dpi level')
+@click.option('-p', '--profile', default='lowest', help='choose the dpi level')
 def preview(profile: Profile) -> None:
     while (True):
         # prompt

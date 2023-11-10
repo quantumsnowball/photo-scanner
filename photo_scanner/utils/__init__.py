@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Literal
 
 
-Profile = Literal['low', 'middle', 'high']
+Profile = Literal['lowest', 'low', 'middle', 'high']
 ImageFormats = Literal['jpg', 'png']
 
 
