@@ -42,6 +42,10 @@ class CropLocation:
         return self.y1-self.y0
 
     @property
+    def pixel(self) -> int:
+        return self.width*self.height
+
+    @property
     def top_line(self) -> Line:
         return ((self.x0, self.y0), (self.x1, self.y0))
 
