@@ -9,10 +9,10 @@ def preview_crop(image: Image.Image,
     preview = image.copy()
     draw = ImageDraw.Draw(preview)
     for l in crop_locs:
-        draw.line(l.top, fill='red', width=l.line_width)
-        draw.line(l.bottom, fill='red', width=l.line_width)
-        draw.line(l.left, fill='green', width=l.line_width)
-        draw.line(l.right, fill='green', width=l.line_width)
+        draw.line(l.top_line, fill='red', width=l.line_width)
+        draw.line(l.bottom_line, fill='red', width=l.line_width)
+        draw.line(l.left_line, fill='green', width=l.line_width)
+        draw.line(l.right_line, fill='green', width=l.line_width)
 
     # show
     show_image(preview, name='Preview')

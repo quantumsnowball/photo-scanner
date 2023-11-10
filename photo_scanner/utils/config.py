@@ -42,19 +42,19 @@ class CropLocation:
         return self.y+self.height
 
     @property
-    def top(self) -> Line:
+    def top_line(self) -> Line:
         return ((self.x, self.y), (self.x_, self.y))
 
     @property
-    def bottom(self) -> Line:
+    def bottom_line(self) -> Line:
         return ((self.x, self.y_), (self.x_, self.y_))
 
     @property
-    def left(self) -> Line:
+    def left_line(self) -> Line:
         return ((self.x, self.y), (self.x, self.y_))
 
     @property
-    def right(self) -> Line:
+    def right_line(self) -> Line:
         return ((self.x_, self.y), (self.x_, self.y_))
 
     @property
