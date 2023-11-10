@@ -1,5 +1,7 @@
+import sys
 from typing import Any
 import click
+from click.exceptions import Abort
 import photo_scanner.utils.message as msg
 
 
@@ -27,10 +29,14 @@ def prompt(text: str,
            *,
            fg: str,
            **kwargs: Any) -> None:
-    styled_text = click.style(text, fg=fg)
-    return click.prompt(styled_text,
-                        show_default=False,
-                        **kwargs)
+    try:
+        styled_text = click.style(text, fg=fg)
+        return click.prompt(styled_text,
+                            show_default=False,
+                            **kwargs)
+    except Abort:
+        failure(' QUIT')
+        sys.exit(0)
 
 
 def prompt_default_accept(text: str,
