@@ -15,7 +15,7 @@ def preview_crop(image: Image.Image,
         draw.line(l.right_line, fill='green', width=l.line_width)
         draw.text(xy=(l.x0, l.y0),
                   text=f'Image {i+1}: {l.width} x {l.height}',
-                  fill=(0, 0, 0), font_size=25)
+                  fill=(0, 0, 0), font_size=25*l.factor)
 
     # show
     show_image(preview, name='Preview')
