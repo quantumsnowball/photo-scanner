@@ -59,7 +59,6 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
         # delete the temp file
         file.unlink()
-        print('deleted')
     except FileNotFoundError:
         click.secho(f"Preview file doesn't exist", fg='red')
 

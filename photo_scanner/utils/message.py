@@ -1,5 +1,6 @@
 from typing import Any
 import click
+import photo_scanner.utils.message as msg
 
 
 def welcome(fg: str = 'blue') -> None:
@@ -34,15 +35,43 @@ def prompt(text: str,
 
 def prompt_default_accept(text: str,
                           **kwargs: Any) -> bool:
+    '''
+    press <any key> + <Enter>: False
+    press <Enter>: False
+    press N + <Enter>: True
+    '''
     try:
         ans = prompt(text,
                      fg='cyan',
                      default='Y',
-                     prompt_suffix=click.style(' ([Y]/n) ', fg='cyan'),
+                     prompt_suffix=click.style(' ([Y]/n) '),
                      **kwargs)
         # user specificially reject to yield Positive
         choice = str(ans).upper() == 'N'
         return choice
-    except Exception:
-        # default yield True
+    except Exception as e:
+        # default yield True to break while loop
+        msg.failure(str(e))
+        return True
+
+
+def prompt_default_reject(text: str,
+                          **kwargs: Any) -> bool:
+    '''
+    press <any key> + <Enter>: True
+    press <Enter>: True
+    press Y + <Enter>: False
+    '''
+    try:
+        ans = prompt(text,
+                     fg='cyan',
+                     default='N',
+                     prompt_suffix=click.style(' (y/[N]) '),
+                     **kwargs)
+        # user specificially reject to yield Negative
+        choice = str(ans).upper() != 'Y'
+        return choice
+    except Exception as e:
+        # default yield True to break while loop
+        msg.failure(str(e))
         return True

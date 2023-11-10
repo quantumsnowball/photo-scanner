@@ -32,10 +32,17 @@ def photo_scanner(ctx: click.Context,
 
     while (True):
         # prompt
-        if msg.prompt_default_accept(click.style('Continue scan and crop?')):
+        if msg.prompt_default_accept(click.style('Continue to scan and crop?')):
             break
         # ensure config is valid
         crop_locs = read_crop_config(profile)
+        # preview loop
+        while (True):
+            # prompt
+            if msg.prompt_default_reject(click.style('Preview crop area?')):
+                break
+            # preview
+            quick_preview(profile='lowest', verbose=False)
         # scan the raw source
         scan(RAW_FILE, profile=profile, verbose=False)
         # read the raw image
