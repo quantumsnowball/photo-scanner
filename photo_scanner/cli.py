@@ -67,7 +67,7 @@ def photo_scanner(ctx: click.Context,
 def preview(profile: Profile) -> None:
     while (True):
         # prompt
-        if msg.prompt_default_accept(click.style('Continue preview?', fg='cyan')):
+        if msg.prompt_default_accept(click.style('Continue preview?')):
             break
         # preview
         quick_preview(profile, verbose=False)

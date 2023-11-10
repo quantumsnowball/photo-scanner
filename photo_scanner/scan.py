@@ -55,12 +55,12 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
             crop_locs = read_crop_config(profile=profile)
             preview_crop(image, crop_locs)
         except FileNotFoundError:
-            click.secho(f"Crop config file not found", fg='red')
+            msg.failure(f"Crop config file not found")
 
         # delete the temp file
         file.unlink()
     except FileNotFoundError:
-        click.secho(f"Preview file doesn't exist", fg='red')
+        msg.failure(f"Preview file doesn't exist")
 
 
 def scan(output: Path | str,
