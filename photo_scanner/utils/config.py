@@ -10,21 +10,21 @@ Line = tuple[Point, Point]
 
 @dataclass
 class CropLocation:
-    x: int
-    y: int
-    width: int
-    height: int
+    x0: int
+    y0: int
+    x1: int
+    y1: int
     profile: Profile
 
     def __post_init__(self):
         # scale the factor according to profile
-        self.x = round(self.x*self.factor)
-        self.y = round(self.y*self.factor)
-        self.width = round(self.width*self.factor)
-        self.height = round(self.height*self.factor)
+        self.x0 *= self.factor
+        self.y0 *= self.factor
+        self.x1 *= self.factor
+        self.y1 *= self.factor
 
     @property
-    def factor(self) -> float:
+    def factor(self) -> int:
         factors = {
             'lowest': 1,
             'low': 3,
@@ -34,28 +34,32 @@ class CropLocation:
         return factors[self.profile]
 
     @property
-    def x_(self) -> int:
-        return self.x+self.width
+    def width(self) -> int:
+        return self.x1-self.x0
 
     @property
-    def y_(self) -> int:
-        return self.y+self.height
+    def height(self) -> int:
+        return self.y1-self.y0
 
     @property
-    def top(self) -> Line:
-        return ((self.x, self.y), (self.x_, self.y))
+    def pixel(self) -> int:
+        return self.width*self.height
 
     @property
-    def bottom(self) -> Line:
-        return ((self.x, self.y_), (self.x_, self.y_))
+    def top_line(self) -> Line:
+        return ((self.x0, self.y0), (self.x1, self.y0))
 
     @property
-    def left(self) -> Line:
-        return ((self.x, self.y), (self.x, self.y_))
+    def bottom_line(self) -> Line:
+        return ((self.x0, self.y1), (self.x1, self.y1))
 
     @property
-    def right(self) -> Line:
-        return ((self.x_, self.y), (self.x_, self.y_))
+    def left_line(self) -> Line:
+        return ((self.x0, self.y0), (self.x0, self.y1))
+
+    @property
+    def right_line(self) -> Line:
+        return ((self.x1, self.y0), (self.x1, self.y1))
 
     @property
     def line_width(self) -> int:
