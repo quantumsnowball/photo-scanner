@@ -15,8 +15,8 @@ RAW_FILE = Path('.raw.jpg')
 @click.group(invoke_without_command=True)
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
-@click.option('--autocontrast/--no-autocontrast', default=True, help='autocontrast enhancement')
-@click.option('--equalize/--no-equalize', default=False, help='equalize enhancement')
+@click.option('--autocontrast', default=False, is_flag=True, help='autocontrast enhancement')
+@click.option('--equalize', default=False, is_flag=True, help='equalize enhancement')
 @click.pass_context
 def photo_scanner(ctx: click.Context,
                   profile: Profile,
