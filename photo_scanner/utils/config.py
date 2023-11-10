@@ -26,10 +26,10 @@ class CropLocation:
     @property
     def factor(self) -> float:
         factors = {
-            'lowest': 1/3,
-            'low': 1,
-            'middle': 2,
-            'high': 4
+            'lowest': 1,
+            'low': 3,
+            'middle': 6,
+            'high': 12,
         }
         return factors[self.profile]
 
@@ -59,7 +59,7 @@ class CropLocation:
 
     @property
     def line_width(self) -> int:
-        return round(5 * self.factor)
+        return round(2 * self.factor)
 
 
 CropLocations = list[CropLocation]
