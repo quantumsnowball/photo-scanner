@@ -3,7 +3,7 @@ import click
 from photo_scanner.crop import crop_images
 from photo_scanner.enhancement import apply_autocontrast, apply_equalize, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
-from photo_scanner.utils import Profile
+from photo_scanner.utils import Layout, Profile
 from photo_scanner.utils.config import LAYOUT_CONFIG_PATH, read_crop_config
 from photo_scanner.utils.image import read_image, save_images
 import photo_scanner.utils.message as msg
@@ -13,6 +13,7 @@ RAW_FILE = Path('.raw.jpg')
 
 
 @click.group(invoke_without_command=True)
+@click.option('-l', '--layout', default='four', help='choose the crop layout')
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
 @click.option('--autocontrast', default=False, is_flag=True, help='autocontrast enhancement')
@@ -20,6 +21,7 @@ RAW_FILE = Path('.raw.jpg')
 @click.pass_context
 def photo_scanner(ctx: click.Context,
                   profile: Profile,
+                  layout: Layout,
                   quality: int,
                   autocontrast: bool,
                   equalize: bool) -> None:
@@ -63,8 +65,10 @@ def photo_scanner(ctx: click.Context,
 
 
 @photo_scanner.command()
+@click.option('-l', '--layout', default='four', help='choose the crop layout')
 @click.option('-p', '--profile', default='lowest', help='choose the dpi level')
-def preview(profile: Profile) -> None:
+def preview(layout: Layout,
+            profile: Profile) -> None:
     while (True):
         # prompt
         if msg.prompt_default_accept(click.style('Continue preview?')):
