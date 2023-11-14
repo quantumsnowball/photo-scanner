@@ -42,7 +42,7 @@ def quick_preview(layout: Layout, profile: Profile, **kwargs: Any) -> None:
     file = Path(PREVIEW_FILENAME)
 
     # scan with corresponding profile to .preview.jpg
-    msg.info(f'Preview using profile `{profile}`')
+    msg.info(f'Preview using layout `{layout}` and profile `{profile}`')
     naps2(file, profile=profile, **kwargs)
 
     # preview file should have been saved to disk
