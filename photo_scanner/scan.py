@@ -25,6 +25,7 @@ def naps2(output: Path | str,
     output = str(output) if isinstance(output, Path) else output
     # cmd
     cmd = [NAPS2_EXE, '-o', output, '-p', profile, ]
+    # flags
     if progress:
         cmd.append('--progress')
     if verbose:

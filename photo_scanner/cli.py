@@ -32,6 +32,7 @@ def photo_scanner(ctx: click.Context,
     if ctx.invoked_subcommand is not None:
         return
 
+    # user prompt loop
     while (True):
         # preview loop
         while (True):
@@ -69,6 +70,7 @@ def photo_scanner(ctx: click.Context,
 @click.option('-p', '--profile', default='lowest', help='choose the dpi level')
 def preview(layout: Layout,
             profile: Profile) -> None:
+    # user prompt loop
     while (True):
         # prompt
         if msg.prompt_default_accept(click.style('Continue preview?')):

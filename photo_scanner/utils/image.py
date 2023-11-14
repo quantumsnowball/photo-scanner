@@ -27,8 +27,9 @@ def save_images(images: list[Image.Image],
                 *,
                 quality: int = 85,
                 ext: ImageFormats = 'jpg') -> None:
-    # save
+    # detect highest filename
     highest = highest_filename(ext)
+    # save each
     for i, image in enumerate(images):
         filename = Path(f'{highest+i+1}.{ext}')
         image.save(filename, quality=quality)
