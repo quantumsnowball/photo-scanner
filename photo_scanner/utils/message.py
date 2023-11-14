@@ -28,7 +28,7 @@ def info(text: str) -> None:
 def prompt(text: str,
            *,
            fg: str,
-           **kwargs: Any) -> None:
+           **kwargs: Any) -> Any:
     try:
         styled_text = click.style(text, fg=fg)
         return click.prompt(styled_text,

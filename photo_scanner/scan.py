@@ -1,10 +1,9 @@
 from pathlib import Path
 import subprocess
 from typing import Any
-import click
 from photo_scanner.crop import preview_crop
-from photo_scanner.utils import Profile
-from photo_scanner.utils.config import read_crop_config
+from photo_scanner.utils import Layout, Profile
+from photo_scanner.utils.config import read_layout_config
 from photo_scanner.utils.image import read_image
 import photo_scanner.utils.message as msg
 
@@ -23,9 +22,10 @@ def naps2(output: Path | str,
     scan using NAPS2 console executable
     '''
     # as Path
-    output = Path(output) if isinstance(output, str) else output
+    output = str(output) if isinstance(output, Path) else output
     # cmd
     cmd = [NAPS2_EXE, '-o', output, '-p', profile, ]
+    # flags
     if progress:
         cmd.append('--progress')
     if verbose:
@@ -37,26 +37,28 @@ def naps2(output: Path | str,
     _ = subprocess.run(cmd)
 
 
-def quick_preview(profile: Profile, **kwargs: Any) -> None:
+def quick_preview(layout: Layout, profile: Profile, **kwargs: Any) -> None:
     # as Path
     file = Path(PREVIEW_FILENAME)
 
     # scan with corresponding profile to .preview.jpg
-    msg.info(f'Preview using profile `{profile}`')
+    msg.info(f'Preview using layout `{layout}` and profile `{profile}`')
     naps2(file, profile=profile, **kwargs)
 
     # preview file should have been saved to disk
     try:
-        # read the image
-        image = read_image(file)
-
-        # apply the crop region to the image
         try:
-            crop_locs = read_crop_config(profile=profile)
-            preview_crop(image, crop_locs)
+            # read layout
+            rotation, crop_locs = read_layout_config(layout, profile)
         except FileNotFoundError:
             msg.failure(f"Crop config file not found")
+            return
 
+        # read the image
+        image = read_image(file, rotation)
+
+        # apply the crop region to the image
+        preview_crop(image, crop_locs)
         # delete the temp file
         file.unlink()
     except FileNotFoundError:

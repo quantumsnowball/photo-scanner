@@ -1,7 +1,8 @@
 from pathlib import Path
 from dataclasses import dataclass
+from typing import Self, TypedDict
 import yaml
-from photo_scanner.utils import Profile
+from photo_scanner.utils import Layout, Profile
 
 
 Point = tuple[int, int]
@@ -16,7 +17,7 @@ class CropLocation:
     y1: int
     profile: Profile
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # scale the factor according to profile
         self.x0 *= self.factor
         self.y0 *= self.factor
@@ -66,15 +67,28 @@ class CropLocation:
         return round(2 * self.factor)
 
 
+CropInfo = list[dict[str, int]]
+
+
+class LayoutInfoItem(TypedDict):
+    rotation: int
+    crop: CropInfo
+
+
+LayoutInfo = dict[str, LayoutInfoItem]
+
+
 CropLocations = list[CropLocation]
 LAYOUT_CONFIG_PATH = Path.home() / '.config/photo-scanner/layout.yaml'
 
 
-def read_crop_config(profile: Profile = 'low') -> CropLocations:
+def read_layout_config(layout: Layout = 'four', profile: Profile = 'low') -> tuple[int, CropLocations]:
     # read yaml file
     with open(LAYOUT_CONFIG_PATH) as file:
         # parse
-        locs: list[dict[str, int]] = yaml.safe_load(file)
+        layout_info: LayoutInfo = yaml.safe_load(file)
+        rotation: int = layout_info[layout]['rotation']
+        crop_info: CropInfo = layout_info[layout]['crop']
         # return as CropLocations
-        crop_config = [CropLocation(profile=profile, **loc) for loc in locs]
-        return crop_config
+        crop_location = [CropLocation(profile=profile, **loc) for loc in crop_info]
+        return rotation, crop_location
