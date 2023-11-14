@@ -1,6 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass
-from typing import TypedDict
+from typing import Self, TypedDict
 import yaml
 from photo_scanner.utils import Layout, Profile
 
@@ -17,7 +17,7 @@ class CropLocation:
     y1: int
     profile: Profile
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # scale the factor according to profile
         self.x0 *= self.factor
         self.y0 *= self.factor
