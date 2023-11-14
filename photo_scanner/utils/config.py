@@ -1,5 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass
+from typing import TypedDict
 import yaml
 from photo_scanner.utils import Layout, Profile
 
@@ -66,16 +67,25 @@ class CropLocation:
         return round(2 * self.factor)
 
 
+CropConfigsYAML = list[dict[str, int]]
+
+
+class LayoutConfigYAML(TypedDict):
+    rotation: dict[str, int]
+    layout: dict[str, CropConfigsYAML]
+
+
 CropLocations = list[CropLocation]
 LAYOUT_CONFIG_PATH = Path.home() / '.config/photo-scanner/layout.yaml'
 
 
-def read_crop_config(layout: Layout = 'four', profile: Profile = 'low') -> CropLocations:
+def read_crop_config(layout: Layout = 'four', profile: Profile = 'low') -> tuple[int, CropLocations]:
     # read yaml file
     with open(LAYOUT_CONFIG_PATH) as file:
         # parse
-        layouts: dict[str, list[dict[str, int]]] = yaml.safe_load(file)
-        locs: list[dict[str, int]] = layouts[layout]
+        crop_configs: LayoutConfigYAML = yaml.safe_load(file)
+        rotation: int = crop_configs['rotation'][layout]
+        locs: CropConfigsYAML = crop_configs['layout'][layout]
         # return as CropLocations
         crop_config = [CropLocation(profile=profile, **loc) for loc in locs]
-        return crop_config
+        return rotation, crop_config

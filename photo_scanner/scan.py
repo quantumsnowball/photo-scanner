@@ -1,7 +1,6 @@
 from pathlib import Path
 import subprocess
 from typing import Any
-import click
 from photo_scanner.crop import preview_crop
 from photo_scanner.utils import Layout, Profile
 from photo_scanner.utils.config import read_crop_config
@@ -47,16 +46,18 @@ def quick_preview(layout: Layout, profile: Profile, **kwargs: Any) -> None:
 
     # preview file should have been saved to disk
     try:
-        # read the image
-        image = read_image(file)
-
-        # apply the crop region to the image
         try:
-            crop_locs = read_crop_config(layout, profile)
-            preview_crop(image, crop_locs)
+            # read layout
+            rotation, crop_locs = read_crop_config(layout, profile)
         except FileNotFoundError:
             msg.failure(f"Crop config file not found")
+            return
 
+        # read the image
+        image = read_image(file, rotation)
+
+        # apply the crop region to the image
+        preview_crop(image, crop_locs)
         # delete the temp file
         file.unlink()
     except FileNotFoundError:
