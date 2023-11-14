@@ -1,7 +1,7 @@
 from pathlib import Path
 from dataclasses import dataclass
 import yaml
-from photo_scanner.utils import Profile
+from photo_scanner.utils import Layout, Profile
 
 
 Point = tuple[int, int]
@@ -70,11 +70,12 @@ CropLocations = list[CropLocation]
 LAYOUT_CONFIG_PATH = Path.home() / '.config/photo-scanner/layout.yaml'
 
 
-def read_crop_config(profile: Profile = 'low') -> CropLocations:
+def read_crop_config(layout: Layout = 'four', profile: Profile = 'low') -> CropLocations:
     # read yaml file
     with open(LAYOUT_CONFIG_PATH) as file:
         # parse
-        locs: list[dict[str, int]] = yaml.safe_load(file)
+        layouts: dict[str, list[dict[str, int]]] = yaml.safe_load(file)
+        locs: list[dict[str, int]] = layouts[layout]
         # return as CropLocations
         crop_config = [CropLocation(profile=profile, **loc) for loc in locs]
         return crop_config

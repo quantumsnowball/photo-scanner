@@ -39,12 +39,12 @@ def photo_scanner(ctx: click.Context,
             if msg.prompt_default_reject(click.style('Preview crop area?')):
                 break
             # preview
-            quick_preview(profile='lowest', verbose=False)
+            quick_preview(layout, profile='lowest', verbose=False)
         # prompt
         if msg.prompt_default_accept(click.style('Continue to scan and crop?')):
             break
         # ensure crop config is valid and is at latest version
-        crop_locs = read_crop_config(profile)
+        crop_locs = read_crop_config(layout, profile)
         # scan the raw source
         scan(RAW_FILE, profile=profile, verbose=False)
         # read the raw image
@@ -74,7 +74,7 @@ def preview(layout: Layout,
         if msg.prompt_default_accept(click.style('Continue preview?')):
             break
         # preview
-        quick_preview(profile, verbose=False)
+        quick_preview(layout, profile, verbose=False)
         #
         msg.success(f'Preview displayed Successfully')
 

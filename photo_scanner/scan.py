@@ -3,7 +3,7 @@ import subprocess
 from typing import Any
 import click
 from photo_scanner.crop import preview_crop
-from photo_scanner.utils import Profile
+from photo_scanner.utils import Layout, Profile
 from photo_scanner.utils.config import read_crop_config
 from photo_scanner.utils.image import read_image
 import photo_scanner.utils.message as msg
@@ -37,7 +37,7 @@ def naps2(output: Path | str,
     _ = subprocess.run(cmd)
 
 
-def quick_preview(profile: Profile, **kwargs: Any) -> None:
+def quick_preview(layout: Layout, profile: Profile, **kwargs: Any) -> None:
     # as Path
     file = Path(PREVIEW_FILENAME)
 
@@ -52,7 +52,7 @@ def quick_preview(profile: Profile, **kwargs: Any) -> None:
 
         # apply the crop region to the image
         try:
-            crop_locs = read_crop_config(profile=profile)
+            crop_locs = read_crop_config(layout, profile)
             preview_crop(image, crop_locs)
         except FileNotFoundError:
             msg.failure(f"Crop config file not found")
