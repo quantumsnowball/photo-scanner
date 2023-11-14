@@ -3,8 +3,8 @@ import click
 from photo_scanner.crop import crop_images
 from photo_scanner.enhancement import apply_autocontrast, apply_equalize, show_diff
 from photo_scanner.scan import NAPS2_EXE, quick_preview, scan
-from photo_scanner.utils import Profile
-from photo_scanner.utils.config import LAYOUT_CONFIG_PATH, read_crop_config
+from photo_scanner.utils import Layout, Profile
+from photo_scanner.utils.config import LAYOUT_CONFIG_PATH, read_layout_config
 from photo_scanner.utils.image import read_image, save_images
 import photo_scanner.utils.message as msg
 
@@ -13,6 +13,7 @@ RAW_FILE = Path('.raw.jpg')
 
 
 @click.group(invoke_without_command=True)
+@click.option('-l', '--layout', default='four', help='choose the crop layout')
 @click.option('-p', '--profile', default='middle', help='choose the dpi level')
 @click.option('-qt', '--quality', default=85, help='image quality level')
 @click.option('--autocontrast', default=False, is_flag=True, help='autocontrast enhancement')
@@ -20,6 +21,7 @@ RAW_FILE = Path('.raw.jpg')
 @click.pass_context
 def photo_scanner(ctx: click.Context,
                   profile: Profile,
+                  layout: Layout,
                   quality: int,
                   autocontrast: bool,
                   equalize: bool) -> None:
@@ -30,6 +32,7 @@ def photo_scanner(ctx: click.Context,
     if ctx.invoked_subcommand is not None:
         return
 
+    # user prompt loop
     while (True):
         # preview loop
         while (True):
@@ -37,16 +40,16 @@ def photo_scanner(ctx: click.Context,
             if msg.prompt_default_reject(click.style('Preview crop area?')):
                 break
             # preview
-            quick_preview(profile='lowest', verbose=False)
+            quick_preview(layout, profile='lowest', verbose=False)
         # prompt
         if msg.prompt_default_accept(click.style('Continue to scan and crop?')):
             break
         # ensure crop config is valid and is at latest version
-        crop_locs = read_crop_config(profile)
+        rotation, crop_locs = read_layout_config(layout, profile)
         # scan the raw source
         scan(RAW_FILE, profile=profile, verbose=False)
         # read the raw image
-        raw_image = read_image(RAW_FILE)
+        raw_image = read_image(RAW_FILE, rotation)
         # crop the images
         images = crop_images(raw_image, crop_locs)
         # apply post processing enhancement
@@ -63,14 +66,17 @@ def photo_scanner(ctx: click.Context,
 
 
 @photo_scanner.command()
+@click.option('-l', '--layout', default='four', help='choose the crop layout')
 @click.option('-p', '--profile', default='lowest', help='choose the dpi level')
-def preview(profile: Profile) -> None:
+def preview(layout: Layout,
+            profile: Profile) -> None:
+    # user prompt loop
     while (True):
         # prompt
         if msg.prompt_default_accept(click.style('Continue preview?')):
             break
         # preview
-        quick_preview(profile, verbose=False)
+        quick_preview(layout, profile, verbose=False)
         #
         msg.success(f'Preview displayed Successfully')
 

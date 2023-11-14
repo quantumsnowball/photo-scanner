@@ -3,6 +3,7 @@ from typing import Literal
 
 
 Profile = Literal['lowest', 'low', 'middle', 'high']
+Layout = Literal['four', 'two']
 ImageFormats = Literal['jpg', 'png']
 
 
