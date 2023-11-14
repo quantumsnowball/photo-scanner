@@ -22,7 +22,7 @@ def naps2(output: Path | str,
     scan using NAPS2 console executable
     '''
     # as Path
-    output = Path(output) if isinstance(output, str) else output
+    output = str(output) if isinstance(output, Path) else output
     # cmd
     cmd = [NAPS2_EXE, '-o', output, '-p', profile, ]
     if progress:
