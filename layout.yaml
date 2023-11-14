@@ -1,8 +1,6 @@
-rotation:
-  four: 270
-  two: 180
-layout:
-  four:
+four:
+  rotation: 270
+  crop:
     - x0: 57
       y0: 44
       x1: 567
@@ -19,7 +17,9 @@ layout:
       y0: 444
       x1: 1138
       y1: 803
-  two:
+two:
+  rotation: 180
+  crop:
     - x0: 23
       y0: 57
       x1: 615
