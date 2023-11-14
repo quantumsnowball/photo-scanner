@@ -3,7 +3,7 @@ import subprocess
 from typing import Any
 from photo_scanner.crop import preview_crop
 from photo_scanner.utils import Layout, Profile
-from photo_scanner.utils.config import read_crop_config
+from photo_scanner.utils.config import read_layout_config
 from photo_scanner.utils.image import read_image
 import photo_scanner.utils.message as msg
 
@@ -48,7 +48,7 @@ def quick_preview(layout: Layout, profile: Profile, **kwargs: Any) -> None:
     try:
         try:
             # read layout
-            rotation, crop_locs = read_crop_config(layout, profile)
+            rotation, crop_locs = read_layout_config(layout, profile)
         except FileNotFoundError:
             msg.failure(f"Crop config file not found")
             return

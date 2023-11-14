@@ -82,7 +82,7 @@ CropLocations = list[CropLocation]
 LAYOUT_CONFIG_PATH = Path.home() / '.config/photo-scanner/layout.yaml'
 
 
-def read_crop_config(layout: Layout = 'four', profile: Profile = 'low') -> tuple[int, CropLocations]:
+def read_layout_config(layout: Layout = 'four', profile: Profile = 'low') -> tuple[int, CropLocations]:
     # read yaml file
     with open(LAYOUT_CONFIG_PATH) as file:
         # parse
